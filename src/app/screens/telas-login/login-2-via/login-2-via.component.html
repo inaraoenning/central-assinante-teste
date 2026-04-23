@@ -43,12 +43,16 @@
             <div class="form-control">
               <label class="label"><span class="label-text">CPF / CNPJ</span></label>
               <input
-                type="tel"
+                type="text"
                 name="cpfcnpj"
                 [(ngModel)]="cpfcnpj"
-                required
+                [required]="true"
                 [disabled]="mostrarTelefone()"
                 placeholder="Apenas números"
+                mask="000.000.000-00||00.000.000/0000-00"
+                [showMaskTyped]="false"
+                [clearIfNotMatch]="true"
+                [dropSpecialCharacters]="false"
                 class="input input-bordered w-full"
               />
               @if (mostrarTelefone()) {
@@ -60,11 +64,15 @@
                     {{ telefoneRecebido }}
                   </p>
                   <input
-                    type="tel"
+                    type="text"
                     name="telefone"
                     [(ngModel)]="telefoneInserido"
-                    required
-                    placeholder="Apenas números"
+                    [required]="true"
+                    placeholder="Digite apenas os 4 últimos dígitos"
+                    mask="0000"
+                    [showMaskTyped]="false"
+                    [clearIfNotMatch]="true"
+                    [dropSpecialCharacters]="true"
                     class="input input-bordered w-full"
                   />
                 </div>

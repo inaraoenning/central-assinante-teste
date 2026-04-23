@@ -8,11 +8,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EmpresaService } from '../../../core/auth/empresa.service';
 import { FinanceiroService } from '../../financeiro/financeiro.service'; // Utiliza Service de Financeiro para carregar dados
 import { Fatura2ViaComponent } from './fatura-2-via/fatura-2-via.component';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-login-2-via',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Fatura2ViaComponent],
+  imports: [CommonModule, FormsModule, RouterLink, Fatura2ViaComponent, NgxMaskDirective],
   templateUrl: './login-2-via.component.html',
 })
 export class Login2ViaComponent {
@@ -34,17 +35,24 @@ export class Login2ViaComponent {
 
   Acessar() {
     this.loading.set(true);
-    setTimeout(() => {
-      this.loading.set(false);
-    }, 1000);
     this.mostrarTelefone.set(true);
-
-    // Simulando chamada ao service de financeiro com dados mockados
-    // para visualização da tela de faturas sem depender do endpoint de login-2-via
+    this.loading.set(false);
   }
 
   verificarCliente() {
     this.loading.set(true);
+
+    if (!this.telefoneInserido() || this.telefoneInserido().length < 4) {
+      this.loading.set(false);
+      this.errorMessage.set('Digite os últimos 4 dígitos do telefone');
+      return;
+    }
+
+    if (isNaN(Number(this.telefoneInserido()))) {
+      this.loading.set(false);
+      this.errorMessage.set('Digite apenas números');
+      return;
+    }
 
     const ultimosDigitos = this.telefoneInserido().slice(-4);
     const ultimosDigitosCliente = this.telefoneRecebido.slice(-4);

@@ -33,6 +33,10 @@
               class="input input-bordered w-full"
               id="selecao-cpf-input"
               autofocus
+              mask="000.000.000-00||00.000.000/0000-00"
+              [showMaskTyped]="false"
+              [clearIfNotMatch]="true"
+              [dropSpecialCharacters]="false"
             />
           </div>
 

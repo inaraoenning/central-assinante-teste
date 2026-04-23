@@ -1,16 +1,17 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { EmpresaService } from '../../../core/auth/empresa.service';
 import { ProvedorInfo } from '../../../types/empresa.types';
 import { ThemeService } from '../../../core/services/theme.service';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-login-selecao',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxMaskDirective],
   templateUrl: 'login-selecao.component.html',
 })
 export class LoginSelecaoComponent implements OnInit {
