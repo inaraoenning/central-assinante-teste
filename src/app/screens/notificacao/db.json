@@ -1,0 +1,62 @@
+{
+  "notificacao": [
+    {
+      "id": "1",
+      "titulo": "Fatura Disponível",
+      "mensagem": "Sua fatura com vencimento para 10/05 já está disponível.",
+      "lida": true,
+      "dataCriacao": "2026-04-14T09:00:00Z"
+    },
+    {
+      "id": "2",
+      "titulo": "Álbum Liberado",
+      "mensagem": "O estúdio liberou suas fotos para seleção.",
+      "lida": true,
+      "dataCriacao": "2026-04-13T15:30:00Z"
+    },
+    {
+      "id": "3",
+      "titulo": "Manutenção Programada",
+      "mensagem": "Haverá instabilidade na rede amanhã de madrugada.",
+      "lida": false,
+      "dataCriacao": "2026-04-14T10:15:00Z"
+    },
+    {
+      "id": "4",
+      "titulo": "Manutenção Programada",
+      "mensagem": "Haverá instabilidade na rede amanhã de madrugada.",
+      "lida": false,
+      "dataCriacao": "2026-04-14T10:15:00Z"
+    },
+    {
+      "id": "5",
+      "titulo": "Manutenção Programada",
+      "mensagem": "Haverá instabilidade na rede amanhã de madrugada.",
+      "lida": false,
+      "dataCriacao": "2026-04-14T10:15:00Z"
+    },
+    {
+      "id": "6",
+      "titulo": "Fatura Disponível",
+      "mensagem": "Sua fatura com vencimento para 10/05 já está disponível.",
+      "lida": false,
+      "dataCriacao": "2026-04-14T09:00:00Z"
+    },
+    {
+      "id": "7",
+      "titulo": "Fatura Disponível",
+      "mensagem": "Sua fatura com vencimento para 10/05 já está disponível.",
+      "lida": false,
+      "dataCriacao": "2026-04-14T09:00:00Z"
+    },
+    {
+      "lida": false,
+      "id": "8k5IEUU7Nzc"
+    },
+    {
+      "lida": false,
+      "id": "kmvT9XGTARM"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

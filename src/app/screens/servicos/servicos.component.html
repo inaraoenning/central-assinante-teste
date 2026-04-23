@@ -1,0 +1,20 @@
+<div class="pb-10 font-sans animate-fade-in">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-black tracking-tight">Meus Serviços</h1>
+  </div>
+  <div class="flex flex-row gap-2 items-start justify-start flex-wrap md:flex-nowrap">
+    <div class="p-2 w-full h-full">
+      <app-informacao></app-informacao>
+    </div>
+    @if (contratoService.contratos().length > 1) {
+      <div class="w-full md:w-md h-full p-2 ml-auto">
+        <app-contrato></app-contrato>
+      </div>
+    } @else {
+      <div class="w-fit h-full p-2 ml-auto flex flex-col gap-2">
+        <p class="text-md font-bold text-end">Contrato</p>
+        <p class="font-semibold text-end">{{ contratoService.contratos().map((c) => c.id) }}</p>
+      </div>
+    }
+  </div>
+</div>

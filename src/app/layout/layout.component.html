@@ -1,0 +1,30 @@
+<!-- Notification toast -->
+<!-- @if (toastService.toast(); as notificacao) {
+  <div class="toast toast-top toast-end z-9999">
+    <div [class]="'alert ' + (notificacao.status === 1 ? 'alert-success' : 'alert-error')">
+      <span>{{ notificacao.message }}</span>
+    </div>
+  </div>
+} -->
+
+<!-- Left drawer -->
+<div class="drawer lg:drawer-open">
+  <input id="left-sidebar-drawer" type="checkbox" class="drawer-toggle" />
+
+  <!-- Page content -->
+  <div class="drawer-content flex flex-col">
+    <app-header />
+    <main class="flex-1 overflow-y-auto pt-4 px-6">
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Sidebar -->
+  <app-left-sidebar />
+</div>
+
+<!-- Right drawer -->
+<!-- <app-right-sidebar /> -->
+
+<!-- Modal -->
+<app-modal />

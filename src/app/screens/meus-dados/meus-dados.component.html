@@ -1,0 +1,254 @@
+@if (cliente(); as u) {
+  <div class="pb-10 font-sans animate-fade-in relative">
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 bg-base-100/50 backdrop-blur-sm z-50 flex items-center justify-center rounded-2xl"
+      >
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    }
+
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold tracking-tight text-base-content">Meus Dados</h1>
+      <div class="badge badge-dark badge-outline gap-2 py-3 px-4 font-bold">ID: {{ u.codigo }}</div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Perfil Resumo -->
+      <div class="card shadow-xl border border-base-200 lg:w-1/3 overflow-hidden bg-base-100">
+        <div class="h-24 bg-gradient-to-r from-primary to-[#005ade] w-full"></div>
+        <div class="card-body items-center text-center -mt-12 grow-0 pt-0">
+          <div class="avatar online mb-4">
+            <div
+              class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 bg-base-100 shadow-lg"
+            >
+              <span
+                class="text-3xl flex justify-center items-center h-full text-primary font-black bg-primary/5"
+              >
+                {{ u.iniciais }}
+              </span>
+            </div>
+          </div>
+          <h2 class="card-title text-2xl font-black text-base-content/90">
+            {{ u.nome }}
+          </h2>
+          <p class="text-sm font-semibold text-base-content/50">
+            {{ u.username || u.maskCpfCnpj }}
+          </p>
+
+          <div
+            class="badge gap-2 mt-4 py-3 px-4 font-bold animate-pulse text-xs text-white"
+            [ngClass]="{
+              'badge-success': !u.bloqueado,
+              'badge-error': u.bloqueado,
+            }"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              class="h-4 w-4 stroke-current"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            {{ u.bloqueado ? 'BLOQUEADO' : 'ATIVO' }}
+          </div>
+          <div class="text-dark text-center gap-2 py-6 px-4 font-bold">ID: {{ u.codigo }}</div>
+        </div>
+
+        <div
+          class="divider mx-6 my-2 text-xs opacity-50 uppercase font-bold tracking-widest text-base-content/30 mt-auto"
+        >
+          Empresa
+        </div>
+        <div class="px-6 py-4 bg-base-200/50 flex items-center justify-between">
+          <span class="text-xs font-black text-base-content/60">{{
+            u.nomeEmpresa || 'Empresa Local'
+          }}</span>
+        </div>
+      </div>
+
+      <!-- Dados do Cliente -->
+      <div class="card bg-base-100 shadow-xl flex-1 border border-base-200">
+        <div class="card-body">
+          <h3 class="card-title text-xl border-b border-base-200 pb-5 mb-3 flex items-center gap-3">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="w-6 h-6 text-primary"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                />
+              </svg>
+            </div>
+            Informações Cadastrais
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+            <!-- Nome Completo -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                >Nome Completo</label
+              >
+              <div class="text-md font-bold text-base-content">{{ u.nome }}</div>
+            </div>
+
+            <!-- Username -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                >Usuário de Acesso</label
+              >
+              <div class="text-md font-bold text-base-content">{{ u.username }}</div>
+            </div>
+
+            <!-- CPF/CNPJ -->
+            <div class="space-y-1">
+              <label
+                class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                >{{ u.tipoCnpjCpf }}</label
+              >
+
+              <div class="text-md font-bold text-base-content">{{ u.maskCpfCnpj }}</div>
+            </div>
+            <!-- RG/INSCRIÇÃO ESTADUAL -->
+            <div class="space-y-1">
+              <label class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                >{{ u.tipoDocumento }}
+              </label>
+              <div class="text-md font-bold text-base-content">
+                {{ u.maskInscricao || 'Não informado' }}
+              </div>
+            </div>
+
+            <!-- Contatos -->
+            <div class="space-y-1 md:col-span-2">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- CELULAR -->
+                <div class="space-y-1">
+                  <label
+                    class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                    >Celular</label
+                  >
+                  <div class="text-md font-bold text-base-content flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-phone-icon lucide-phone"
+                    >
+                      <path
+                        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+                      />
+                    </svg>
+                    {{ u.maskCelular || 'Não informado' }}
+                  </div>
+                </div>
+
+                <!-- Telefone -->
+                <div class="space-y-1">
+                  <label class="text-[11px] font-black text-primary/85 uppercase tracking-[0.08em]"
+                    >Telefone</label
+                  >
+                  <div class="text-md font-bold text-base-content flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-phone-icon lucide-phone"
+                    >
+                      <path
+                        d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+                      />
+                    </svg>
+                    {{ u.maskTelefone || 'Não informado' }}
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="space-y-1">
+                  <label
+                    class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+                    >E-mail de Contato</label
+                  >
+                  <div class="text-md font-bold text-base-content flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-mail-icon lucide-mail"
+                    >
+                      <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                    </svg>
+                    {{ u.email || 'Não informado' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Endereço -->
+            <div class="space-y-1 md:col-span-2 border-t border-base-200 pt-5">
+              <label
+                class="text-[11px] font-black text-base-content/60 uppercase tracking-[0.08em]"
+              >
+                <span>Endereço de Instalação</span></label
+              >
+              <div
+                class="text-md font-bold text-base-content leading-relaxed italic opacity-90 flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-map-pin-icon lucide-map-pin"
+                >
+                  <path
+                    d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+                  />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                {{ u.enderecoCompleto }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

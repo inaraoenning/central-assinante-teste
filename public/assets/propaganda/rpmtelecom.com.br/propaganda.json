@@ -1,0 +1,28 @@
+{
+  "banners": [
+    {
+      "id": 1,
+      "imagem": "assets/propaganda/rpmtelecom.com.br/p1.jpg",
+      "link": "",
+      "ativo": false
+    },
+    {
+      "id": 2,
+      "imagem": "assets/propaganda/rpmtelecom.com.br/p2.jpg",
+      "link": "",
+      "ativo": false
+    },
+    {
+      "id": 3,
+      "imagem": "assets/propaganda/rpmtelecom.com.br/p3.jpg",
+      "link": "",
+      "ativo": false
+    },
+    {
+      "id": 5,
+      "imagem": "assets/propaganda/rpmtelecom.com.br/p4.jpg",
+      "link": "",
+      "ativo": false
+    }
+  ]
+}

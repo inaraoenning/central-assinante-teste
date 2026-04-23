@@ -1,0 +1,174 @@
+<div class="pb-10 pr-0">
+  <!-- Page title -->
+
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold tracking-tight text-base-content">Início</h1>
+    <div class="animate-pulse">
+      @if (cliente()) {
+        @if (cliente()?.bloqueado) {
+          <span class="badge badge-error gap-2 py-4 px-4 font-bold text-white">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-radio-icon lucide-radio"
+            >
+              <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
+              <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
+              <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
+              <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+
+            Bloqueado
+          </span>
+        }
+        @if (!cliente()?.bloqueado) {
+          <span class="badge badge-success gap-2 py-4 px-4 font-bold text-xs text-white">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-radio-icon lucide-radio"
+            >
+              <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
+              <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
+              <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
+              <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+            Ativo
+          </span>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="flex">
+    <div class="flex flex-col gap-6">
+      <!-- Desbloqueio de Internet -->
+      @if (cliente()?.bloqueado) {
+        <div role="alert" class="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-message-square-warning-icon lucide-message-square-warning"
+          >
+            <path
+              d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"
+            />
+            <path d="M12 15h.01" />
+            <path d="M12 7v4" />
+          </svg>
+          <p class="text-white">Realize o pagamento de suas faturas para evitar bloqueios</p>
+          <button class="btn btn-light" (click)="meuModalDesbloqueio.openModal()">
+            Desbloqueio Temporário
+          </button>
+        </div>
+        <app-modal-desbloqueio #meuModalDesbloqueio></app-modal-desbloqueio>
+      }
+
+      <!-- Propaganda -->
+      <app-propaganda></app-propaganda>
+
+      <!-- Cards Principais -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (sec of sections; track sec.value; let i = $index) {
+          <a
+            [routerLink]="sec.link"
+            class="flex w-full gap-4 px-[20px] py-[16px] bg-base-200 rounded-xl shadow"
+          >
+            <div class="stat-figure text-secondary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-8 h-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  [attr.d]="sec.path"
+                />
+              </svg>
+            </div>
+            <div class="flex flex-col">
+              <div class="stat-value text-lg">{{ sec.value }}</div>
+              <div class="stat-desc">{{ sec.description }}</div>
+            </div>
+          </a>
+        }
+      </div>
+
+      @if (!isLoading()) {
+        <div class="card bg-base-300 rounded-field bg-gradient-to-r from-primary to-[#005ade]">
+          <div class="card-body">
+            <div class="flex flex-row justify-between items-center pb-2">
+              <span class="font-bold text-primary-content">Plano Contratado</span>
+              <span class="font-bold text-primary-content">{{
+                contratoService.contratoSelecionado()?.id
+              }}</span>
+            </div>
+            <h2
+              class="card-title text-2xl md:text-4xl text-primary-content font-black tracking-wider py-1"
+            >
+              {{ contratoService.contratoSelecionado()?.plano }}
+            </h2>
+
+            <div class="pt-2">
+              <p class="flex gap-2 items-center font-semibold text-sm text-primary-content">
+                {{ contratoService.contratoSelecionado()?.velocidadeUp?.toFixed(0) }} Mbps Upload
+              </p>
+              <p class="flex gap-2 items-center font-semibold text-sm text-primary-content">
+                {{ contratoService.contratoSelecionado()?.velocidadeDown?.toFixed(0) }} Mbps
+                Download
+              </p>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="card w-full flex-col gap-4">
+          <div class="skeleton h-48 w-full"></div>
+        </div>
+      }
+      <!-- Consumo Internet  -->
+      <!-- <div class="grid gap-4 mb-6"> -->
+      <!-- Gráfico de Barras -->
+      <!-- <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <div class="flex justify-between">
+              <h3 class="card-title text-base">Consumo de Internet</h3>
+              <div class="flex gap-2">
+                <button class="btn btn-sm btn-primary">Mensal</button>
+              </div>
+            </div>
+            <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+            </canvas>
+          </div>
+        </div> -->
+      <!-- </div> -->
+    </div>
+    <!-- <div class="hidden lg:block lg:w-16"></div> -->
+  </div>
+</div>

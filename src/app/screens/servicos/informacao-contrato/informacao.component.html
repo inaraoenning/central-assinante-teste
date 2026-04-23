@@ -1,0 +1,212 @@
+<div class="flex flex-col gap-2">
+  <!-- Plano Contratado -->
+  @if (!isLoading()) {
+    <div class="card bg-base-300 rounded-field bg-gradient-to-r from-primary to-[#005ade]">
+      <div class="card-body">
+        <div class="flex flex-row justify-between items-center pb-2">
+          <span class="font-bold text-primary-content">Plano Contratado</span>
+          <span class="font-bold text-primary-content">{{
+            contratoService.contratoSelecionado()?.id
+          }}</span>
+        </div>
+        <h2
+          class="card-title text-2xl md:text-4xl text-primary-content font-black tracking-wider py-1"
+        >
+          {{ contratoService.contratoSelecionado()?.plano }}
+        </h2>
+
+        <div class="pt-2">
+          <p class="flex gap-2 items-center font-semibold text-sm text-primary-content">
+            {{ contratoService.contratoSelecionado()?.velocidadeUp?.toFixed(0) }} Mbps Upload
+          </p>
+          <p class="flex gap-2 items-center font-semibold text-sm text-primary-content">
+            {{ contratoService.contratoSelecionado()?.velocidadeDown?.toFixed(0) }} Mbps Download
+          </p>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="card w-full flex-col gap-4">
+      <div class="skeleton h-48 w-full"></div>
+    </div>
+  }
+  <!-- Dados de Cobrança -->
+  @if (!isLoading()) {
+    <div class="card pt-6 my-0">
+      <div class="card-body pl-2 pt-0 mt-0 pb-3">
+        <!-- <h2 class="text-md font-bold">Dados de Cobrança</h2> -->
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-col">
+            <p class="text-md font-bold">Dia de Vencimento</p>
+            <p class="font-semibold">
+              Todo dia {{ contratoService.contratoSelecionado()?.diaVencimento }}
+            </p>
+          </div>
+          <div class="flex flex-col">
+            <p class="text-md font-bold">Valor da Mensalidade</p>
+            <p class="font-semibold">
+              {{ contratoService.contratoSelecionado()?.valorMensalidade | currency: 'BRL' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card rounded-box">
+      <div class="card-body pl-2 pb-0 mb-0">
+        <h2 class="text-md font-bold">Endereço de Instalação</h2>
+        <div class="flex gap-2 items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-map-pin-icon lucide-map-pin"
+          >
+            <path
+              d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"
+            />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <p class="font-semibold">
+            {{ contratoService.contratoSelecionado()?.enderecoInstalacao }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <!-- SVAs -->
+    @if (contratoService.contratoSelecionado()?.itensCombo?.length) {
+      <div class="card rounded-box pt-0 mt-0">
+        <div class="card-body pl-2 py-0 my-0">
+          <h2 class="text-lg font-bold">Benefícios</h2>
+          <div class="flex flex-row flex-wrap gap-3 mb-6">
+            @for (item of contratoService.contratoSelecionado()?.itensCombo; track $index) {
+              @if (!item.descricao.includes('Desconto') && !item.tipo.includes('SCM')) {
+                <!-- Super Conhecimento -->
+                @if (item.tipo.includes('SVA') && item.descricao.includes('Cursos')) {
+                  <div class="card rounded-box border-[1px]-muted border-[1px] shadow-sm w-full">
+                    <div class="card-body justify-center">
+                      <h2 class="text-md font-black">Serviço Adicional</h2>
+                      <h2 class="text-md font-semibold">{{ item.descricao }}</h2>
+                      <div>Usuário: {{ cliente()?.tipoCnpjCpf }}</div>
+                      <div>Senha: 5 Primeiro dígitos do seu {{ cliente()?.tipoCnpjCpf }}</div>
+                      <a
+                        href="https://ead.superconhecimento.com.br/minha-conta/"
+                        target="_blank"
+                        class="text-sm btn btn-sm btn-primary w-fit"
+                        >Acessar</a
+                      >
+                    </div>
+                  </div>
+                } @else {
+                  <div class="card rounded-box border-[1px]-muted border-[1px] shadow-sm w-full">
+                    <div class="card-body justify-center">
+                      <h2 class="text-md font-black">
+                        {{ item.tipo == 'SVA' ? 'Serviço Adicional' : item.tipo }}
+                      </h2>
+                      <h2 class="text-md font-semibold">{{ item.descricao }}</h2>
+                    </div>
+                  </div>
+                }
+                <!-- Olé TV -->
+                <!-- Skeelo -->
+              }
+            }
+          </div>
+        </div>
+      </div>
+    }
+  } @else {
+    <div class="flex w-full flex-col gap-10">
+      <div class="flex flex-col gap-4">
+        <div class="skeleton h-4 w-full"></div>
+        <div class="skeleton h-4 w-full"></div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="skeleton h-4 w-full"></div>
+        <div class="skeleton h-4 w-full"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Equipamentos em Comodato -->
+  @if (!isLoading()) {
+    @if (contratoService.contratoSelecionado()?.equipamentos?.length) {
+      <div class="card-md rounded-box border-[1px]-primary border-[1px]-l-4 border-[1px]-r-4">
+        <div class="card-body pl-0">
+          <h2 class="text-md font-bold">Equipamentos Em Comodato</h2>
+          <div class="overflow-x-auto">
+            <table class="table">
+              <!-- head -->
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                </tr>
+              </thead>
+              @for (item of contratoService.contratoSelecionado()?.equipamentos; track $index) {
+                <tbody>
+                  <tr>
+                    <th>{{ $index + 1 }}</th>
+                    <th>{{ item }}</th>
+                  </tr>
+                </tbody>
+              }
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+  } @else {
+    <div class="divider"></div>
+
+    <div class="flex w-full flex-col gap-10">
+      <div class="flex flex-col gap-4">
+        <div class="skeleton h-4 w-full"></div>
+        <div class="skeleton h-4 w-full"></div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="skeleton h-4 w-full"></div>
+        <div class="skeleton h-4 w-full"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Contrato -->
+  <div class="card">
+    <div class="card-body pl-2">
+      <h2 class="text-md font-bold mb-2">Contrato</h2>
+      <div class="flex flex-row gap-2 justify-between">
+        <a [href]="linkContrato()" target="_blank" class="btn btn-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-file-down-icon lucide-file-down"
+          >
+            <path
+              d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
+            />
+            <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+            <path d="M12 18v-6" />
+            <path d="m9 15 3 3 3-3" />
+          </svg>
+          Baixar Contrato
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

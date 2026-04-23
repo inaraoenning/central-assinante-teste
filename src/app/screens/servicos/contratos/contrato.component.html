@@ -1,0 +1,24 @@
+<div class="pb-6 text-sm font-semibold opacity-60 tracking-wide">
+  <div>Contrato {{ contratoService.contratoSelecionado()?.id }}</div>
+  <div>Usuário: {{ contratoService.contratoSelecionado()?.usernameCliente }}</div>
+</div>
+<div class="overflow-y-auto max-h-[80vh] flex flex-col gap-3 pr-2 custom-scrollbar">
+  <!-- Card seleção contrato  -->
+  @for (contrato of contratoService.contratos(); track contrato.id) {
+    <a
+      (click)="contratoService.selecionarContrato(contrato.id.toString())"
+      class="transition-all duration-300 cursor-pointer rounded-box shadow-md border-light border-l-4"
+      [class.border-success]="contratoService.contratoSelecionado()!.id === contrato.id"
+    >
+      <div>
+        <div class="p-2 flex flex-col gap-1">
+          <div class="text-xs uppercase font-bold opacity-90">Contrato {{ contrato.id }}</div>
+          <div class="text-xs font-semibold opacity-70">Plano: {{ contrato.plano }}</div>
+          <div class="text-xs font-semibold opacity-70">
+            Usuário: {{ contrato.usernameCliente }}
+          </div>
+        </div>
+      </div>
+    </a>
+  }
+</div>

@@ -1,0 +1,66 @@
+<div class="pb-10 font-sans">
+  <h1 class="text-2xl font-bold tracking-tight text-base-content mb-6">Aplicativo</h1>
+  <div class="flex">
+    <div class="card bg-base-200 shadow rounded-lg">
+      <div class="card-body">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <figure
+              class="max-w-100 rounded-2xl transition-transform duration-300 ease-in-out hover:scale-105 cursor-pointer"
+            >
+              <img src="assets/telas/1.png" class="max-w-[220px]" />
+            </figure>
+          </div>
+          <div class="card">
+            <div class="flex items-center gap-3">
+              <div class="text-2xl"></div>
+              <h3 class="card-title text-base font-bold">Gerencie seu plano com facilidade</h3>
+            </div>
+            <ul class="mt-5 space-y-2">
+              @for (app of aplicativo; track app.title) {
+                <li
+                  class="flex items-center gap-2 text-sm text-base-content transition-transform duration-300 ease-in-out hover:scale-105 cursor-pointer"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 text-base-content shrink-0"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path fill-rule="evenodd" [attr.d]="app.emoji" clip-rule="evenodd" />
+                  </svg>
+                  <b>{{ app.title }}</b>
+                </li>
+              }
+            </ul>
+            <div class="flex flex-row gap-4 mt-5">
+              <div class="flex flex-col gap-2 max-w-[180px]">
+                <!-- Apple -->
+                <img src="assets/qrcode/apple.png" alt="qrcode apple" class="rounded-md" />
+                <a
+                  href="https://apps.apple.com/us/app/provedor-net/id6758862683"
+                  class="transition-transform duration-300 ease-in-out hover:scale-105"
+                  target="_blank"
+                  rel="noopener"
+                  ><img src="assets/qrcode/apple2.png" alt="link store apple"
+                /></a>
+              </div>
+              <div class="flex flex-col gap-2 max-w-[180px]">
+                <!-- Android -->
+                <img src="assets/qrcode/google.png" alt="qrcode android" class="rounded-md" />
+                <a
+                  href="https://play.google.com/store/apps/details?id=br.com.nbit.provedorapp"
+                  class="transition-transform duration-300 ease-in-out hover:scale-105"
+                  target="_blank"
+                  rel="noopener"
+                  ><img src="assets/qrcode/google2.png" alt="link store android"
+                /></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hidden lg:block"></div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<section class="grid gap-4">
+  <div class="relative">
+    <swiper-container
+      #swiperEl
+      init="false"
+      class="mySwiper block w-full overflow-hidden rounded-2xl"
+    >
+      @for (ad of ads(); track ad.id) {
+        <swiper-slide>
+          @if (ad.ativo) {
+            <img
+              [src]="ad.imagem"
+              alt="Propaganda Dinâmica"
+              class="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+            />
+          }
+        </swiper-slide>
+      }
+    </swiper-container>
+
+    @if (ads().length > 1) {
+      <button
+        #prevBtn
+        class="custom-prev absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full p-3 text-white transition hover:bg-black/80"
+        aria-label="Anterior"
+      >
+        ❮
+      </button>
+
+      <button
+        #nextBtn
+        class="custom-next absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full p-3 text-white transition hover:bg-black/80"
+        aria-label="Próximo"
+      >
+        ❯
+      </button>
+    }
+  </div>
+</section>

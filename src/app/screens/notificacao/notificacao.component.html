@@ -1,0 +1,23 @@
+<div class="pb-10">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Notificações</h2>
+    @if (notificacaoService.qtdeNaoLida() > 0) {
+      <button class="btn btn-outline btn-sm w-fit" (click)="marcarTodasComoLidas()">
+        <span class="text-xs">Marcar todas como lidas</span>
+      </button>
+    }
+  </div>
+  <div class="card bg-base-100 shadow">
+    <div class="card-body">
+      @if (notificacaoService.notificacao().length === 0) {
+        <div class="text-center py-20 opacity-60">Você não tem nenhuma notificação no momento.</div>
+      } @else {
+        <div class="flex flex-col gap-4">
+          @for (notif of notificacaoService.notificacao(); track notif.id) {
+            <app-card-notificacao [notificacao]="notif"></app-card-notificacao>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

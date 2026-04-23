@@ -1,0 +1,147 @@
+<div class="min-h-screen bg-base-200 flex flex-col items-center justify-center py-6">
+  <div class="card w-full max-w-sm shadow-xl bg-base-100">
+    <div class="card-body">
+      <!-- Logo e Nome da Empresa -->
+      <div class="text-center mb-4">
+        @if (empresaService.empresaAtiva(); as emp) {
+          @if (emp.logoUrl) {
+            <div class="justify-center py-2">
+              <img [src]="emp.logoUrl" alt="Logo" class="mx-auto h-14 object-contain mb-3" />
+            </div>
+          } @else {
+            <div
+              class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <span class="text-primary-content font-bold text-2xl">
+                {{ emp.nomeAmigavelEmpresa?.charAt(0) || 'C' }}
+              </span>
+            </div>
+          }
+          <h1 class="text-2xl font-bold">
+            {{ emp.nomeAmigavelEmpresa || 'Central do Assinante' }}
+          </h1>
+        } @else {
+          <div
+            class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-3"
+          >
+            <span class="loading loading-spinner loading-md text-primary-content"></span>
+          </div>
+          <h1 class="text-2xl font-bold">Carregando...</h1>
+        }
+        <p class="text-sm text-base-content/60 mt-1">Acesse sua conta</p>
+      </div>
+
+      <!-- Formulário -->
+      <form #loginForm="ngForm">
+        <div class="form-control">
+          <label class="label"><span class="label-text">CPF / CNPJ</span></label>
+          <input
+            type="text"
+            name="username"
+            [(ngModel)]="username"
+            [disabled]="cpfCnpj"
+            required
+            placeholder="Apenas números"
+            class="input input-bordered w-full"
+            id="login-cpf-input"
+          />
+        </div>
+
+        <div class="form-control mt-3">
+          <label class="label">
+            <span class="label-text">Senha</span>
+            <a routerLink="/forgot-password" class="label-text-alt link link-hover">
+              Esqueceu a senha?
+            </a>
+          </label>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            class="input input-bordered w-full"
+            id="login-senha-input"
+          />
+        </div>
+
+        @if (errorMessage()) {
+          <div class="alert alert-error mt-3 py-2">
+            <span class="text-sm">{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <div class="form-control mt-6">
+          <!-- Btn Entrar -->
+          <button
+            type="button"
+            class="btn btn-primary w-full"
+            [disabled]="loading()"
+            (click)="onSubmit()"
+            id="btn-entrar"
+          >
+            @if (loading()) {
+              <span class="loading loading-spinner loading-sm"></span>
+            }
+            Entrar
+          </button>
+          <div class="my-2"></div>
+          <!-- Btn 2ª Via Boleto -->
+          <button
+            type="button"
+            class="btn btn-ghost w-full"
+            id="btn-2-via-boleto"
+            (click)="irPara2ViaBoleto()"
+          >
+            2ª Via Boleto
+          </button>
+        </div>
+      </form>
+
+      <!-- Link "Entrar com outra empresa" — aparece apenas no modo domínio -->
+
+      <div class="divider text-xs text-base-content/30 my-4">ou</div>
+      <a
+        routerLink="/login-selecao"
+        (click)="empresaService.resetarParaGenerico()"
+        class="btn btn-ghost btn-sm w-full text-base-content/50 text-xs"
+        id="btn-outra-empresa"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+          />
+        </svg>
+        Entrar com outra empresa
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer dinâmico -->
+  @if (empresaService.empresaAtiva(); as emp) {
+    <div class="mt-10 text-center text-sm text-base-content/60">
+      <p class="mt-1 font-bold">{{ emp.nomeAmigavel || emp.nomeAmigavelEmpresa }}<br /></p>
+      <hr class="border-base-300 w-48 mx-auto my-4" />
+      @if (emp.cidade) {
+        <p>
+          {{ emp.cidade }}{{ emp.uf ? ', ' + emp.uf : '' }}<br />
+          {{ emp.endereco }}{{ emp.bairro ? ' - ' + emp.bairro : '' }}
+        </p>
+      }
+      <p>{{ emp.suporteEmpresa }} - {{ emp.telefoneEmpresa }}<br /></p>
+      <p class="mt-1">{{ emp.emailEmpresa }}</p>
+      <hr class="border-base-300 w-48 mx-auto my-4" />
+      @if (emp.cnpjEmpresa) {
+        <p>CNPJ: {{ emp.cnpjEmpresa }}<br /></p>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,79 @@
+<div
+  class="fixed overflow-hidden z-20 bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out"
+  [ngClass]="
+    isOpen
+      ? 'transition-opacity opacity-100 duration-500 translate-x-0'
+      : 'transition-all delay-500 opacity-0 translate-x-full'
+  "
+>
+  <section
+    class="w-80 md:w-96 right-0 absolute bg-base-100 h-full shadow-xl delay-400 duration-500 ease-in-out transition-all transform"
+    [ngClass]="isOpen ? 'translate-x-0' : 'translate-x-full'"
+  >
+    <div class="relative pb-5 flex flex-col h-full">
+      <!-- Header -->
+      <div class="navbar flex pl-4 pr-4 shadow-md">
+        <button class="float-left btn btn-circle btn-outline btn-sm" (click)="close()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <span class="ml-2 font-bold text-xl">{{ config?.header }}</span>
+      </div>
+
+      <!-- Content Start -->
+      <div class="overflow-y-scroll pl-4 pr-4">
+        <div class="flex flex-col md:flex-row pb-1 justify-center gap-3 mt-3">
+          @if (notificacaoService.notificacao().some((n) => !n.lida)) {
+            <button class="btn btn-outline btn-sm" (click)="marcarTodasComoLidas()">
+              <span class="text-xs">Marcar todas como lidas</span>
+            </button>
+          }
+          <button class="btn btn-outline btn-sm" (click)="irParaPaginaCompleta()">
+            <span class="text-xs">Ver todas as notificações</span>
+          </button>
+        </div>
+        <div class="flex flex-col w-full">
+          @switch (config?.bodyType) {
+            @case ('NOTIFICATION') {
+              @for (n of notificacaoService.notificacao(); track n.id) {
+                @if (!n.lida) {
+                  <app-card-notificacao
+                    [notificacao]="n"
+                    (cardClicado)="aoClicarNaNotificacao($event)"
+                  ></app-card-notificacao>
+                }
+              } @empty {
+                <div class="text-center opacity-50 mt-10 text-sm">
+                  Você não tem novas notificações.
+                </div>
+              }
+            }
+            @case ('CALENDAR_EVENTS') {
+              @for (e of config?.extraObject; track e.title) {
+                <div class="grid mt-3 card rounded-box p-3" [ngClass]="getThemeBg(e.theme)">
+                  {{ e.title }}
+                </div>
+              }
+            }
+          }
+        </div>
+      </div>
+      <!-- Content End -->
+    </div>
+  </section>
+
+  <!-- Backdrop click area -->
+  <section class="w-screen h-full cursor-pointer" (click)="close()"></section>
+</div>

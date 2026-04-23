@@ -1,0 +1,50 @@
+<!-- Open the modal using ID.showModal() method -->
+<dialog id="modal-desbloqueio" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold mb-6">Desbloqueio de Temporário</h3>
+    <p>
+      Ao solicitar o desbloqueio temporário, você garante que já realizou ou vai realizar o
+      pagamento da(s) fatura(s) em atraso.
+    </p>
+    <div class="divider"></div>
+    <p>
+      Caso o pagamento não seja identificado em até 72 horas, o bloqueio é realizado de forma
+      automática.
+    </p>
+    <div class="divider"></div>
+    <p>O desbloqueio temporário tem duração de 3 dias e/ou até a identificação do pagamento</p>
+    <div class="divider"></div>
+    <h5 class="py-4">
+      Você está prestes a solicitar um desbloqueio temporário da sua internet. Tem certeza de que
+      deseja prosseguir?
+    </h5>
+    @if (errorMessage()) {
+      <div class="alert alert-error text-white my-2">
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert alert-success text-white my-2">
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    <div class="modal-action">
+      <form method="dialog" class="flex gap-2">
+        <button class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmarDesbloqueio()"
+          [disabled]="isSubmitting() || successMessage() !== null"
+        >
+          @if (isSubmitting()) {
+            <span class="loading loading-spinner"></span>
+          }
+          Confirmar
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>

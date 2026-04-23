@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-base-200 flex flex-col items-center justify-center py-6">
+  <div class="card w-full max-w-sm shadow-xl bg-base-100">
+    <div class="card-body">
+
+      <div class="text-center mb-4">
+        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold text-base-content">Recuperar Senha</h1>
+        <p class="text-sm text-base-content/60 mt-1">
+          Informe seu CPF/CNPJ e enviaremos um link de redefinição para o e-mail cadastrado.
+        </p>
+      </div>
+
+      <div class="form-control">
+        <label class="label"><span class="label-text font-medium">CPF / CNPJ</span></label>
+        <input
+          type="tel"
+          [(ngModel)]="cpfCnpj"
+          (keyup.enter)="seguir()"
+          placeholder="Apenas números"
+          class="input input-bordered w-full"
+          id="cpf-recuperar-input"
+          autofocus
+        />
+      </div>
+
+      @if (errorMessage) {
+        <div class="alert alert-error mt-4 py-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-sm">{{ errorMessage }}</span>
+        </div>
+      }
+
+      <div class="form-control mt-6">
+        <button
+          type="button"
+          class="btn btn-primary w-full"
+          [disabled]="loading"
+          (click)="seguir()"
+          id="btn-recuperar"
+        >
+          @if (loading) {
+            <span class="loading loading-spinner loading-sm"></span>
+            Enviando...
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Enviar Link de Redefinição
+          }
+        </button>
+      </div>
+
+      <p class="text-center text-sm mt-4">
+        <a routerLink="/login" class="link link-hover text-base-content/60">← Voltar para o Login</a>
+      </p>
+
+    </div>
+  </div>
+</div>

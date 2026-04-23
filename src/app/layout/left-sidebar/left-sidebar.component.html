@@ -1,0 +1,86 @@
+<label for="left-sidebar-drawer" class="drawer-overlay"></label>
+<div class="pt-2 w-80 bg-base-100 min-h-full shadow-r-md">
+  <!-- Close button (mobile) -->
+  <div class="flex flex-row flex-nowrap items-center py-4 gap-2 px-6">
+    <!-- Logo -->
+    <div class="flex items-center gap-2">
+      @if (empresaService.empresaAtiva(); as emp) {
+        @if (emp.logoUrl) {
+          <div class="flex py-2">
+            <img [src]="emp.logoUrl" alt="Logo" class="mx-auto h-16 object-contain" />
+          </div>
+        } @else {
+          <div class="w-12 h-12 flex items-center justify-center mx-auto mb-3">
+            <span class="text-primary-content font-bold text-2xl">
+              {{ emp.nomeAmigavelEmpresa?.charAt(0) || 'C' }}
+            </span>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Fechar Drawer -->
+    <button
+      class="btn btn-ghost bg-base-300 btn-circle z-50 ml-auto lg:hidden"
+      (click)="closeSidebar()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <div class="text-dark text-lg font-bold mt-3 text-start px-6">Central do Assinante</div>
+  <div class="divider px-6"></div>
+  <ul class="menu bg-base-100 min-h-full text-base-content gap-1">
+    <!-- Routes -->
+    @for (route of routes; track route.name) {
+      <li>
+        @if (route.submenu) {
+          <!-- Submenu item -->
+          <details [open]="isSubmenuOpen(route)">
+            <summary class="flex items-center gap-2">
+              <span [innerHTML]="route.icon"></span>
+              {{ route.name }}
+            </summary>
+            <ul>
+              @for (sub of route.submenu; track sub.path) {
+                <li>
+                  <a
+                    [routerLink]="sub.path"
+                    routerLinkActive="font-semibold bg-base-200"
+                    class="flex items-center gap-3 relative"
+                  >
+                    <span [innerHTML]="sub.icon"></span>
+                    {{ sub.name }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </details>
+        } @else {
+          <!-- Direct link -->
+          <a
+            [routerLink]="route.path"
+            routerLinkActive="font-semibold bg-base-200"
+            class="flex items-center gap-2 relative"
+          >
+            <span [innerHTML]="route.icon"></span>
+            {{ route.name }}
+          </a>
+        }
+      </li>
+    }
+  </ul>
+</div>

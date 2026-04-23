@@ -1,0 +1,22 @@
+@if (isOpen) {
+  <dialog class="modal modal-open" (click)="onBackdropClick($event)">
+    <div class="modal-box" [class]="sizeClass">
+      <h3 class="font-bold text-lg">{{ config?.title }}</h3>
+      <div class="py-4">
+        @if (config?.bodyType === 'CONFIRMATION') {
+          <p class="text-base-content/70">
+            Are you sure you want to proceed? This action cannot be undone.
+          </p>
+        } @else {
+          <p class="text-base-content/70">
+            {{ config?.extraObject?.message || 'Modal content here.' }}
+          </p>
+        }
+      </div>
+      <div class="modal-action">
+        <button class="btn btn-ghost" (click)="close()">Cancel</button>
+        <button class="btn btn-primary" (click)="close()">Confirm</button>
+      </div>
+    </div>
+  </dialog>
+}

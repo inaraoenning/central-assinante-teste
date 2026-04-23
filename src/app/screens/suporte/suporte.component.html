@@ -1,0 +1,158 @@
+<div class="pb-10 font-sans animate-fade-in">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold tracking-tight text-base-content">Suporte e Contato</h1>
+    <p class="text-base-content/60">Canais de atendimento disponíveis para você</p>
+  </div>
+
+  <!-- Banner de Dados da Empresa -->
+  @if (empresa(); as e) {
+    <div class="card bg-base-200/50 mb-8 border border-base-300">
+      <div class="card-body p-6 flex-row items-center gap-6">
+        <div class="p-3">
+          <img [src]="e.logoUrl" alt="Logo" class="h-12 w-auto object-contain" />
+        </div>
+        <div class="flex-1">
+          <h3 class="text-lg font-black text-base-content truncate">
+            {{ e.nomeAmigavel || e.nome || e.nomeEmpresa }}
+          </h3>
+          <p class="text-sm font-bold text-base-content/50 uppercase tracking-widest mt-1">
+            {{ e.cnpjEmpresa }}
+          </p>
+        </div>
+        <div class="hidden lg:block text-right">
+          <p class="text-md font-black text-base-content/30 tracking-tighter">Website</p>
+          <div class="badge badge-primary font-black uppercase text-xs tracking-widest">
+            <a href="https://{{ e.dominio }}" target="_blank" rel="noopener">{{ e.dominio }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
+    @for (sup of suporte; track sup.id) {
+      @if (sup.id === 'teste') {
+        <!-- Card Especial de Teste de Conexão -->
+        <div
+          (click)="testarConexao()"
+          class="card bg-base-100 shadow hover:shadow-xl cursor-pointer hover:-translate-y-1 transition-all duration-300 border-2 border-info/20 group relative overflow-hidden"
+        >
+          <div class="card-body p-6">
+            <div class="flex items-center gap-5">
+              <div
+                class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all bg-info/10 text-info group-hover:scale-110"
+              >
+                @if (testandoConexao() && 'SpeedTest') {
+                  <span class="loading loading-spinner loading-md"></span>
+                } @else {
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-radio-icon lucide-radio"
+                  >
+                    <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
+                    <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
+                    <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
+                    <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
+                    <circle cx="12" cy="12" r="2" />
+                  </svg>
+                }
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-base-content leading-tight">{{ sup.titulo }}</h3>
+                <p
+                  class="text-sm font-semibold transition-all"
+                  [class.text-info]="!testandoConexao()"
+                  [class.animate-pulse]="testandoConexao()"
+                >
+                  {{ sup.valor }}
+                </p>
+              </div>
+            </div>
+            <p class="text-xs text-base-content/50 font-bold mt-4">{{ sup.descricao }}</p>
+          </div>
+        </div>
+      } @else {
+        <!-- Cards de Contato Padrão -->
+        <a
+          [href]="sup.href"
+          target="_blank"
+          rel="noopener"
+          class="card bg-base-100 shadow hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-base-200/60 group"
+        >
+          <div class="card-body p-6">
+            <div class="flex items-center gap-5">
+              <div
+                class="w-14 h-14 rounded-2xl flex items-center justify-center transition-colors group-hover:bg-opacity-30"
+                [style.background-color]="sup.color + '20'"
+                [style.color]="sup.color"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="w-7 h-7"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="sup.emoji" />
+                </svg>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-bold text-base-content leading-tight">{{ sup.titulo }}</h3>
+                <p class="text-sm font-semibold text-muted mt-0.5">{{ sup.valor }}</p>
+              </div>
+            </div>
+            <p class="text-xs text-base-content/50 font-bold mt-4">{{ sup.descricao }}</p>
+          </div>
+        </a>
+      }
+    }
+    <!-- Speedtest Fixo-->
+    <a
+      href="https://www.speedtest.net/pt"
+      target="_blank"
+      rel="noopener"
+      class="card bg-base-100 shadow hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-base-200/60 group"
+    >
+      <div class="card-body p-6">
+        <div class="flex items-center gap-5">
+          <div
+            class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all bg-info/10 text-info group-hover:scale-110"
+          >
+            <!-- <span class="loading loading-spinner loading-md"></span> -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-gauge-icon lucide-gauge"
+            >
+              <path d="m12 14 4-4" />
+              <path d="M3.34 19a10 10 0 1 1 17.32 0" />
+            </svg>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-base-content leading-tight">Teste de Conexão</h3>
+            <p class="text-sm font-semibold text-muted mt-0.5">Abrir SpeedTest</p>
+          </div>
+        </div>
+        <p class="text-xs text-base-content/50 font-bold mt-4">Medir download e upload</p>
+      </div>
+    </a>
+  </div>
+</div>
