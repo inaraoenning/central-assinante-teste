@@ -81,6 +81,13 @@ export class LoginComponent implements OnInit {
   }
 
   irPara2ViaBoleto(): void {
-    this.router.navigate(['/login-via-boleto']);
+    this.router.navigate(['/login-2-via'], {
+      queryParams: {
+        logoEmpresa: this.empresaService.empresaAtiva()?.logoUrl || '',
+        nomeEmpresa:
+          this.empresaService.empresaAtiva()?.nomeAmigavelEmpresa ||
+          this.empresaService.empresaAtiva()?.nomeAmigavel,
+      },
+    });
   }
 }

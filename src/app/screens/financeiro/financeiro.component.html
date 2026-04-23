@@ -151,16 +151,16 @@
               <!-- Botões de Ação Boleto / Cód Barras / PIX -->
               <div class="flex flex-wrap gap-2">
                 @if (atual.status !== 'pago') {
-                  @if (isBoleto(atual.fatura)) {
+                  @if (financeiroService.isBoleto(atual.fatura)) {
                     <button
-                      (click)="openBoleto(atual.fatura)"
+                      (click)="financeiroService.openBoleto(atual.fatura)"
                       class="tooltip btn btn-primary rounded-2xl shadow-md px-6 btn-sm md:btn-md"
                       data-tip="Imprimir Boleto"
                     >
                       Pagar Fatura
                     </button>
                     <button
-                      (click)="copiarCodigoBarras(atual.fatura)"
+                      (click)="financeiroService.copiarCodigoBarras(atual.fatura)"
                       class="tooltip btn btn-outline rounded-2xl btn-sm md:btn-md"
                       data-tip="Copiar Código de Barras"
                     >
@@ -169,7 +169,7 @@
                   }
                   @if (atual.fatura.textoImagemQRcodePix) {
                     <button
-                      (click)="copiarCodigoPix(atual.fatura)"
+                      (click)="financeiroService.copiarCodigoPix(atual.fatura)"
                       class="tooltip btn btn-outline rounded-2xl btn-sm md:btn-md"
                       data-tip="Copiar Código PIX"
                     >
@@ -264,11 +264,11 @@
                 <!-- 2ª Via -->
                 <td class="py-6 font-bold">
                   @if (!f.pago) {
-                    @if (isBoleto(f)) {
+                    @if (financeiroService.isBoleto(f)) {
                       <div class="flex gap-4 justify-center">
                         <!-- Boleto -->
                         <a
-                          (click)="openBoleto(f)"
+                          (click)="financeiroService.openBoleto(f)"
                           class="hover:text-success cursor-pointer tooltip"
                           data-tip="Imprimir Boleto"
                           ><svg
@@ -292,7 +292,7 @@
                         </a>
                         <!-- Copiar Linha Digitavel Boleto -->
                         <a
-                          (click)="copiarCodigoBarras(f)"
+                          (click)="financeiroService.copiarCodigoBarras(f)"
                           class="hover:text-success cursor-pointer tooltip"
                           data-tip="Copiar Código de Barras"
                           ><svg
@@ -317,7 +317,7 @@
                         <!-- PIX -->
                         @if (f.textoImagemQRcodePix) {
                           <a
-                            (click)="copiarCodigoPix(f)"
+                            (click)="financeiroService.copiarCodigoPix(f)"
                             class="hover:text-success cursor-pointer tooltip"
                             data-tip="Copiar Código PIX"
                             ><svg
@@ -368,10 +368,10 @@
                         f.pago &&
                         f.visualizarBoleto &&
                         f.hashNfcom &&
-                        mostrarNfMap().get(f.idTitulo)
+                        financeiroService.mostrarNfMap().get(f.idTitulo)
                       ) {
                         <a
-                          (click)="openNFcom(f)"
+                          (click)="financeiroService.openNFcom(f)"
                           class="hover:text-success cursor-pointer tooltip"
                           data-tip="Imprimir Nota Fiscal"
                         >
@@ -401,7 +401,7 @@
                       }
                       @if (f.pago && f.visualizarBoleto && f.hashNF) {
                         <a
-                          (click)="openNF(f)"
+                          (click)="financeiroService.openNF(f)"
                           class="btn btn-square btn-sm btn-ghost"
                           title="Nota Fiscal"
                         >
@@ -423,7 +423,7 @@
                       }
                       @if (f.pago && f.visualizarBoleto && f.hashNFS) {
                         <a
-                          (click)="openNFS(f)"
+                          (click)="financeiroService.openNFS(f)"
                           class="btn btn-square btn-sm btn-ghost"
                           title="NF de Serviço"
                         >

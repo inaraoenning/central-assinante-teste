@@ -1,0 +1,244 @@
+@if (faturasAbertas().length > 0 || contratosComPendencia().length > 0) {
+  <div class="pb-10 font-sans animate-fade-in max-w-5xl mx-auto px-0 md:px-4">
+    <!-- Seletor de Contrato (Pills) -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      @if (contratosComPendencia().length > 1) {
+        <div class="flex flex-wrap gap-3 items-center mt-6">
+          <span class="text-sm font-bold uppercase tracking-widest opacity-40">Contratos:</span>
+          @for (c of contratosComPendencia(); track c.id) {
+            <button
+              (click)="selecionarContrato(c.id!)"
+              class="transition-all duration-300 px-4 py-2 rounded-full bg-base-300 font-bold text-xs flex items-center gap-2 border-2"
+              [class.bg-primary]="contratoSelecionado()!.id === c.id"
+              [class.text-primary-content]="contratoSelecionado()!.id === c.id"
+              [class.border-primary]="contratoSelecionado()!.id === c.id"
+              [class.bg-base-200]="contratoSelecionado()!.id !== c.id"
+              [class.text-base-content-60]="contratoSelecionado()!.id !== c.id"
+              [class.border-transparent]="contratoSelecionado()!.id !== c.id"
+            >
+              <div
+                class="w-2 h-2 rounded-full"
+                [class.bg-error]="c.statusGeral === 'vencida'"
+                [class.bg-info]="c.statusGeral === 'aberta'"
+                [class.bg-success]="c.statusGeral === 'paga'"
+              ></div>
+              {{ c.id }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Lista de Faturas Pendentes -->
+    @if (faturasAbertas().length > 0) {
+      <div class="card bg-base-100 shadow-xl overflow-hidden rounded-3xl border border-base-200">
+        <div
+          class="p-6 sm:p-8 border-b border-base-200/60 bg-base-50 flex items-center justify-between"
+        >
+          <h3 class="text-md md:text-xl font-bold flex items-center gap-3">
+            <span
+              class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </span>
+            Faturas
+          </h3>
+          <div class="badge badge-xs p-6 md:p-5 font-bold shadow-md gap-2">
+            <div class="hidden md:flex text-sm md:text-md">Forma de Pagamento:</div>
+            <div class="text-sm md:text-md text-center md:text-start">
+              {{ faturasAbertas().find((f) => f.pagamento)?.pagamento }}
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="table table-md w-full">
+            <thead
+              class="bg-base-200/50 text-base-content font-black uppercase text-[10px] tracking-widest border-b border-base-200"
+            >
+              <tr>
+                <th class="py-6">Titulo</th>
+                <th>Valor</th>
+                <th class="py-6">Vencimento</th>
+                <th class="py-6">Referência</th>
+                <th class="text-center">2ª Via</th>
+
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of faturasAbertas(); track f.idTitulo) {
+                <tr
+                  class="hover:bg-base-200/30 transition-colors border-b border-base-100 last:border-0"
+                  [class.opacity-50]="f.pago"
+                >
+                  <!-- Titulo -->
+                  <td class="py-6 font-bold">{{ f.idTitulo }}</td>
+                  <!-- Valor -->
+                  <td class="font-black">
+                    {{ f.valor | currency: 'BRL' }}
+                  </td>
+                  <!-- Vencimento -->
+                  <td class="py-6 font-bold">
+                    {{ f.vencimento | date: 'dd/MM/yyyy' }}
+                  </td>
+                  <!-- Referência -->
+                  <td class="py-6 font-bold text-center">
+                    {{ f.dataEmissao | date: 'MM/yyyy' }}
+                  </td>
+                  <!-- 2ª Via -->
+                  <td class="py-6 font-bold">
+                    @if (!f.pago) {
+                      @if (fatura2ViaService.isBoleto(f)) {
+                        <div class="flex gap-4 justify-center">
+                          <!-- Boleto -->
+                          <a
+                            (click)="fatura2ViaService.openBoleto(f)"
+                            class="hover:text-success cursor-pointer tooltip"
+                            data-tip="Imprimir Boleto"
+                            ><svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-printer-icon lucide-printer"
+                            >
+                              <path
+                                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+                              />
+                              <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" />
+                              <rect x="6" y="14" width="12" height="8" rx="1" />
+                            </svg>
+                          </a>
+                          <!-- Copiar Linha Digitavel Boleto -->
+                          <a
+                            (click)="fatura2ViaService.copiarCodigoBarras(f)"
+                            class="hover:text-success cursor-pointer tooltip"
+                            data-tip="Copiar Código de Barras"
+                            ><svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              class="lucide lucide-clipboard-copy-icon lucide-clipboard-copy"
+                            >
+                              <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                              <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                              <path d="M16 4h2a2 2 0 0 1 2 2v4" />
+                              <path d="M21 14H11" />
+                              <path d="m15 10-4 4 4 4" />
+                            </svg>
+                          </a>
+                          <!-- PIX -->
+                          @if (f.textoImagemQRcodePix) {
+                            <a
+                              (click)="fatura2ViaService.copiarCodigoPix(f)"
+                              class="hover:text-success cursor-pointer tooltip"
+                              data-tip="Copiar Código PIX"
+                              ><svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-qr-code-icon lucide-qr-code"
+                              >
+                                <rect width="5" height="5" x="3" y="3" rx="1" />
+                                <rect width="5" height="5" x="16" y="3" rx="1" />
+                                <rect width="5" height="5" x="3" y="16" rx="1" />
+                                <path d="M21 16h-3a2 2 0 0 0-2 2v3" />
+                                <path d="M21 21v.01" />
+                                <path d="M12 7v3a2 2 0 0 1-2 2H7" />
+                                <path d="M3 12h.01" />
+                                <path d="M12 3h.01" />
+                                <path d="M12 16v.01" />
+                                <path d="M16 12h1" />
+                                <path d="M21 12v.01" />
+                                <path d="M12 21v-1" />
+                              </svg>
+                            </a>
+                          }
+                        </div>
+                      }
+                    } @else {
+                      <div class="disabled font-medium p-2 text-xs text-center">
+                        Pago em {{ f.dataPago | date: 'dd/MM/yyyy' }}
+                      </div>
+                    }
+                  </td>
+
+                  <!-- Status pagamento-->
+                  <td>
+                    <div
+                      class="badge text-white font-bold text-[10px] py-3 tracking-wider border-2 w-full text-center"
+                      [class.badge-error]="f.statusParaUI === 'vencida'"
+                      [class.badge-info]="f.statusParaUI === 'aberta'"
+                      [class.badge-success]="f.statusParaUI === 'paga'"
+                      [class.border-error/20]="f.statusParaUI === 'vencida'"
+                      [class.border-info/20]="f.statusParaUI === 'aberta'"
+                      [class.border-success/20]="f.statusParaUI === 'paga'"
+                    >
+                      {{ f.labelStatus }}
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } @else {
+      <div class="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+        <div
+          class="w-24 h-24 bg-base-200 rounded-full flex items-center justify-center text-base-content/20 mb-6"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-12 w-12"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-black mb-2">Dados não encontrados</h2>
+        <p class="text-base-content/50 max-w-xs font-medium">
+          Não encontramos informações financeiras vinculadas ao seu acesso neste momento.
+        </p>
+      </div>
+    }
+  </div>
+}

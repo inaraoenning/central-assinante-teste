@@ -112,8 +112,13 @@
                     <p class="font-semibold text-base-content truncate">
                       {{ provedor.nomeAmigavelEmpresa || provedor.nomeEmpresa }}
                     </p>
-                    @if (provedor.telefoneEmpresa) {
-                      <p class="text-xs text-base-content/50">{{ provedor.telefoneEmpresa }}</p>
+                    @if (provedor.idCliente) {
+                      <p class="text-xs text-base-content/50">
+                        Cód Cliente: {{ provedor.idCliente }}
+                      </p>
+                      <p class="text-xs text-base-content/50">
+                        Usuário: {{ provedor.usernameCliente }}
+                      </p>
                     }
                   </div>
 
