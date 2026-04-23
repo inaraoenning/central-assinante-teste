@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 // import { HttpClient } from '@angular/common/http';
 // import { environment } from '../../../../environments/environment';
 // import { Observable } from 'rxjs';
@@ -24,6 +24,7 @@ export class Login2ViaComponent {
   errorMessage = signal<string>('');
   mostrarFaturas = signal<boolean>(false);
 
+  router = inject(Router);
   route = inject(ActivatedRoute);
   logoEmpresa = this.route.snapshot.paramMap.get('logoEmpresa');
   nomeEmpresa = this.route.snapshot.paramMap.get('nomeEmpresa');
@@ -63,5 +64,9 @@ export class Login2ViaComponent {
 
   novaBusca() {
     return;
+  }
+
+  irParaLogin() {
+    this.router.navigate(['/login']);
   }
 }
