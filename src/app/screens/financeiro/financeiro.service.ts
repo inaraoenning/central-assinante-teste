@@ -3,12 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { EmpresaService } from '../../core/services/empresa.service';
 import { Contrato } from '../../models/contrato.model';
 import { Fatura } from '../../models/fatura.model';
-import { map } from 'rxjs/operators';
 import { ContratoDto } from '../../types/contrato.types';
 import { Md5 } from 'ts-md5';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/ToastService.service';
 import { firstValueFrom } from 'rxjs';
+import { ContratoService } from '../servicos/contrato.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,41 +17,19 @@ export class FinanceiroService {
   private empresaService = inject(EmpresaService);
   private http = inject(HttpClient);
   private toastService = inject(ToastService);
+  private contratoService = inject(ContratoService);
 
-  private _contratos = signal<Contrato[]>(this.carregarDoCache());
   private _contratoSelecionadoId = signal<number | null>(null);
 
-  private readonly CACHE_TTL_MS = 5 * 60 * 1000; // Cache TTL (5 minutos)
-
-  // Recuperar do LocalStorage ao abrir (F5)
-  private carregarDoCache(): Contrato[] {
-    const cached = localStorage.getItem('@App:contratos');
-    const tsRaw = localStorage.getItem('@App:contratos:ts');
-
-    if (!cached || !tsRaw) return [];
-
-    const idade = Date.now() - Number(tsRaw);
-    if (idade > this.CACHE_TTL_MS) {
-      // Cache expirado
-      localStorage.removeItem('@App:contratos');
-      localStorage.removeItem('@App:contratos:ts');
-      return [];
-    }
-    try {
-      return JSON.parse(cached).map((c: ContratoDto) => new Contrato(c));
-    } catch (e) {
-      return [];
-    }
-  }
-
-  // Read-only signals
-  public contratos = this._contratos.asReadonly();
+  // Delega para ContratoService — fonte única de verdade para contratos
+  public contratos = this.contratoService.contratos;
 
   readonly contratosComFatura = computed(() => {
     const hoje = new Date();
     const cutoff = new Date(hoje.getFullYear(), hoje.getMonth() - 12, 1).getTime();
 
-    return this._contratos()
+    return this.contratoService
+      .contratos()
       .filter((c) => c.faturas.length > 0)
       .sort((a, b) => {
         const temRecente = (c: Contrato) =>
@@ -113,19 +91,15 @@ export class FinanceiroService {
     const hojeTs = hoje.getTime();
 
     // Limite inferior: apenas faturas dos últimos 12 meses
-    // new Date(ano, mes - 12) resolve o rollback de ano automaticamente
-    // ex: mesAtual=3 (abril/2026) → new Date(2026, -9, 1) = 1º abril/2025
     const cutoffTs = new Date(anoAtual, mesAtual - 12, 1).getTime();
 
     // Pré-computa o timestamp de cada fatura uma única vez.
-    // Evita criar new Date() repetidamente nos filters e sorts (que rodam O(n log n) vezes).
     type FaturaComTs = Fatura & { _ts: number; _ano: number; _mes: number };
     const faturasComTs: FaturaComTs[] = faturas.map((f) => {
       const d = new Date(f.vencimento);
       return Object.assign(f, { _ts: d.getTime(), _ano: d.getFullYear(), _mes: d.getMonth() });
     });
 
-    // Filtros — usam _ts / _ano / _mes em vez de new Date()
     const atrasadas = faturasComTs.filter(
       (f) => !f.pago && (f.situacao === 'Vencida' || f._ts < hojeTs),
     );
@@ -137,7 +111,6 @@ export class FinanceiroService {
 
     const pagas = faturasComTs.filter((f) => f.pago || f.situacao === 'Pago');
 
-    // Ordenação — usa _ts diretamente, sem new Date()
     atrasadas.sort((a, b) => a._ts - b._ts);
     abertas.sort((a, b) => a._ts - b._ts);
     pagas.sort((a, b) => b._ts - a._ts);
@@ -146,13 +119,12 @@ export class FinanceiroService {
 
     const todasFaturas = [...atrasadas, ...abertas, ...anteriores];
 
-    // Unique by idTitulo
     const unique = todasFaturas.filter(
       (f, i, arr) => arr.findIndex((x) => x.idTitulo === f.idTitulo) === i,
     );
 
-    // Filtra: remove futuras, limita a 12 meses atrás.
-    // Faturas atrasadas (não pagas e já vencidas) sempre aparecem, independente da idade.
+    // Remove futuras, limita a 12 meses.
+    // Faturas atrasadas (não pagas e já vencidas) sempre aparecem
     return unique.filter(
       (f) =>
         (!f.pago && f._ts < hojeTs) || // atrasadas sempre visíveis
@@ -161,32 +133,11 @@ export class FinanceiroService {
   });
 
   loadContratos() {
-    const url = `${this.empresaService.apiUrl}app/contratos/detalhado`;
-
-    return this.http.get<any>(url).pipe(
-      map((res) => {
-        const payload = res?.data || res;
-        const rawList = Array.isArray(payload) ? payload : payload?.contratos || [];
-        console.log('rawList: ', rawList);
-        // Salva no cache
-        localStorage.setItem('@App:contratos', JSON.stringify(rawList));
-        localStorage.setItem('@App:contratos:ts', Date.now().toString());
-
-        const contratos = rawList.map((c: ContratoDto) => new Contrato(c));
-        this._contratos.set(contratos);
-        return contratos;
-      }),
-    );
+    return this.contratoService.buscarContratos();
   }
 
   setContratoSelecionado(id: number) {
     this._contratoSelecionadoId.set(id);
-  }
-
-  // Injeta lista de contratos diretamente no signal (mock ou resposta do backend de 2ª via)
-  setContratosMock(rawList: ContratoDto[]) {
-    const contratos = rawList.map((c) => new Contrato(c));
-    this._contratos.set(contratos);
   }
 
   // Controle de visibilidade da NFCom verificado via API
@@ -212,7 +163,8 @@ export class FinanceiroService {
 
   // Coleta todas as notas de TODOS os contratos, faz 1 único set()
   async verificarTodasAsNotas() {
-    const faturas = this._contratos()
+    const faturas = this.contratoService
+      .contratos()
       .flatMap((c) => c.faturas || [])
       .filter(
         (f) =>
@@ -230,7 +182,6 @@ export class FinanceiroService {
       faturas.map((f) => this.verificaExistenciaNfCom(f)),
     );
 
-    // Map com todas as faturas
     const mapaFaturas = new Map(this.mostrarNfMap());
 
     for (const resultado of resultados) {
@@ -241,7 +192,7 @@ export class FinanceiroService {
     this.mostrarNfMap.set(mapaFaturas);
   }
 
-  //  Métodos de ação compartilhados (usados em financeiro e fatura-2-via)
+  // Ações compartilhadas (usados em financeiro e fatura-2-via)
   openBoleto(f: Fatura) {
     const url = `${environment.apiUrl}print/boleto?id=${f.idTitulo}&k=${this.gerarMd5(f.idTitulo, this.empresaService.empresaAtiva()?.db ?? '')}&local=5`;
     window.open(url, '_blank');

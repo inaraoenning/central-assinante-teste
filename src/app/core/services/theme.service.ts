@@ -21,7 +21,6 @@ export class ThemeService {
 
     if (this.corEmpresa) {
       this.applyCorEmpresa(this.corEmpresa);
-      console.log(this.corEmpresa);
     }
   }
 
@@ -33,7 +32,7 @@ export class ThemeService {
     const oklchSyntax = this.hexToOklchString(cor);
     const root = document.documentElement;
 
-    // No DaisyUI v4+, a cor não pode ser HEX. Deve ser repassada como os três parâmetros espaçados do formato OKLCH
+    // DaisyUI v4+: cor não pode ser HEX, deve ser repassada como os três parâmetros espaçados do formato OKLCH
 
     // classes PRIMARY (bg-primary, text-primary, etc)
     root.style.setProperty('--p', oklchSyntax);
@@ -43,7 +42,7 @@ export class ThemeService {
     root.style.setProperty('--s', oklchSyntax);
     root.style.setProperty('--sf', oklchSyntax);
 
-    // Garantir que o texto sobre essas cores (primária/secundária) seja legível (branco ou preto)
+    // Garante que o texto sobre essas cores (primária/secundária) seja (branco ou preto)
     const contrastColor = this.corClara(cor) ? '0 0 0' : '1 0 0';
     root.style.setProperty('--pc', contrastColor); // Conteúdo sobre o Primary
     root.style.setProperty('--sc', contrastColor); // Conteúdo sobre o Secondary
@@ -70,7 +69,7 @@ export class ThemeService {
   }
 
   // Motor conversor Hex -> RGB -> OKLab -> OKLCH
-  // Permite personalizar os temas dinamicamente no DaisyUI v4 sem dependências externas
+  // Personalizar os temas dinamicamente no DaisyUI v4 sem dependências externas
   private hexToOklchString(hex: string): string {
     hex = hex.replace(/^#/, '');
     if (hex.length === 3)

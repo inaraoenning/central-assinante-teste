@@ -15,7 +15,6 @@ export class PropagandaService {
     const emp = this.empresa.empresaAtiva()?.dominio;
     // O parâmetro `t` no final serve para enganar o navegador e contornar o cache do arquivo .json
     const configUrl = 'assets/propaganda/' + emp + '/propaganda.json?t=' + new Date().getTime();
-    console.log('propaganda url gerada:', configUrl);
 
     return this.http.get<{ banners: Propaganda[] }>(configUrl).pipe(
       // Filtra apenas as que estão marcadas como ativas

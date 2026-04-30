@@ -123,10 +123,10 @@ export class EmpresaDominioService {
       default:
         // Para testes locais: simula o modo domínio de uma empresa real.
         // REMOVER antes de ir para produção — deixar o default sem _modo.set para forçar /login-selecao.
-        isDominioValido = true;
-        empresaBase.dominio = 'lifenet.com.br'; // ← domínio primeiro
-        empresaBase.logoUrl = `assets/img/logo_${empresaBase.dominio}.png`; // ← logo depois
-        empresaBase.db = 'v2';
+        //isDominioValido = true;
+        //empresaBase.dominio = 'lifenet.com.br'; // ← domínio primeiro
+        //empresaBase.logoUrl = `assets/img/logo_${empresaBase.dominio}.png`; // ← logo depois
+        //empresaBase.db = 'v2';
 
         break;
     }
@@ -162,7 +162,6 @@ export class EmpresaDominioService {
             ...empresaBase,
             ...dados,
           };
-          console.log(finalEmpresa);
 
           // Atualiza o estado de novo (Cores aqui)
           this.state.atualizarEstado('dominio', finalEmpresa);

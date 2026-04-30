@@ -44,7 +44,6 @@ export class LoginSegundaViaService {
           if (response.success) {
             this._token2Via.set(response.token || null);
             this._cadastros.set(response.cadastros || []);
-            console.log(response.cadastros);
           } else {
             console.error(response.error);
           }

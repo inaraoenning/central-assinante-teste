@@ -1,28 +1,46 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs'; // para lidar com requisições assíncronas
-import { tap, finalize, map } from 'rxjs/operators'; // para lidar com efeitos colaterais
+import { Observable, of } from 'rxjs';
+import { tap, finalize, map } from 'rxjs/operators';
 import { Contrato } from '../../models/contrato.model';
 import { ContratoDto } from '../../types/contrato.types';
 import { EmpresaService } from '../../core/services/empresa.service';
 
-// O decorador @Injectable avisa ao Angular que esta classe é um Serviço.
-// 'providedIn: root' - este serviço é um Singleton: o Angular cria
-// apenas UMA cópia dele na memória para a aplicação inteira dividir.
+// Cache localStorage com TTL de 5 minutos
 @Injectable({ providedIn: 'root' })
 export class ContratoService {
   private empresaService = inject(EmpresaService);
   private http = inject(HttpClient);
 
-  // Estados privados
-  private _contratos = signal<Contrato[]>([]);
-  private _isLoading = signal<boolean>(false);
-  private _contratoSelecionado = signal<Contrato | null>(null);
+  private readonly CACHE_KEY = '@App:contratos';
+  private readonly CACHE_TS_KEY = '@App:contratos:ts';
+  private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
-  // Sinais Público (read-only)
-  public contratos = computed(() => this._contratos());
+  // Inicializa do cache para evitar loading em navegações subsequentes
+  private _contratos = signal<Contrato[]>(this.carregarDoCache());
+  private _isLoading = signal<boolean>(false);
+  private _contratoSelecionado = signal<Contrato | null>(this.carregarDoCache()[0] ?? null);
+
+  // Sinais públicos read-only
+  public contratos = this._contratos.asReadonly();
   public isLoading = computed(() => this._isLoading());
   public contratoSelecionado = computed(() => this._contratoSelecionado());
+
+  private carregarDoCache(): Contrato[] {
+    try {
+      const cached = localStorage.getItem(this.CACHE_KEY);
+      const tsRaw = localStorage.getItem(this.CACHE_TS_KEY);
+      if (!cached || !tsRaw) return [];
+      if (Date.now() - Number(tsRaw) > this.CACHE_TTL_MS) {
+        localStorage.removeItem(this.CACHE_KEY);
+        localStorage.removeItem(this.CACHE_TS_KEY);
+        return [];
+      }
+      return JSON.parse(cached).map((c: ContratoDto) => new Contrato(c));
+    } catch {
+      return [];
+    }
+  }
 
   selecionarContrato(id: string): void {
     this._contratoSelecionado.set(
@@ -30,29 +48,40 @@ export class ContratoService {
     );
   }
 
-  // Método para buscar/carregar os contratos
-  // Retorna um Observable, que é como uma "promessa" de que os dados chegarão.
-  buscarContratos(): Observable<any | Contrato[]> {
-    this._isLoading.set(true); // Antes da Requisição sair, avisa o Signal de que o carregamento começou
+  // Injeta contratos diretamente no signal — usado em mocks e 2ª via.
+  setContratosMock(rawList: ContratoDto[]): void {
+    const contratos = rawList.map((c) => new Contrato(c));
+    this._contratos.set(contratos);
+    if (!this._contratoSelecionado() && contratos.length > 0) {
+      this._contratoSelecionado.set(contratos[0]);
+    }
+  }
+
+  // Busca contratos do backend. Se cache válido e dados já estiverem no signal retorna sem fazer nova requisição
+  buscarContratos(): Observable<Contrato[]> {
+    const tsRaw = localStorage.getItem(this.CACHE_TS_KEY);
+    const cacheValido = !!tsRaw && Date.now() - Number(tsRaw) < this.CACHE_TTL_MS;
+
+    if (cacheValido && this._contratos().length > 0) {
+      return of(this._contratos()); // cache hit — sem HTTP
+    }
+
+    this._isLoading.set(true);
     const url = `${this.empresaService.apiUrl}app/contratos/detalhado`;
 
-    // GET
     return this.http.get<any>(url).pipe(
       map((res) => {
-        const listaBruta: ContratoDto[] = res?.data || res || [];
-        return listaBruta.map((item) => new Contrato(item));
+        const payload = res?.data || res;
+        const rawList = Array.isArray(payload) ? payload : payload?.contratos || [];
+        return rawList.map((c: ContratoDto) => new Contrato(c));
       }),
-      // TAP pega a resposta, guarda no localStorage e atualiza o Signal
       tap((contratos) => {
+        localStorage.setItem(this.CACHE_KEY, JSON.stringify(contratos));
+        localStorage.setItem(this.CACHE_TS_KEY, Date.now().toString());
         this._contratos.set(contratos);
-        this._contratoSelecionado.set(contratos[0]);
+        this._contratoSelecionado.set(contratos[0] ?? null);
       }),
-
-      // Finalize - EXECUTA SEMPRE, (sucesso ou erro)
-      finalize(() => {
-        // Avisa o Signal que o carregamento acabou, para o spinner parar de girar
-        this._isLoading.set(false);
-      }),
+      finalize(() => this._isLoading.set(false)),
     );
   }
 

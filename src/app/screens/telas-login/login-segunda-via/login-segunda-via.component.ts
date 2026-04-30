@@ -70,7 +70,6 @@ export class LoginSegundaViaComponent {
         if (response.success) {
           this.mostrarFaturas.set(true);
           this.faturaSegundaViaService.buscarContratosSegundaVia();
-          console.log('Dados Recebidos:', response);
         } else {
           this.errorMessage.set('Credenciais não conferem');
           this.loading.set(false);

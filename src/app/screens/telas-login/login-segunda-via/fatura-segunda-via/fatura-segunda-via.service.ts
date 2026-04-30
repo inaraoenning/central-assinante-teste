@@ -51,8 +51,6 @@ export class FaturaSegundaViaService {
         // Usa contratoDTO para instanciar as classes
         const contratos = rawList.map((c: ContratoDto) => new Contrato(c));
         this._contratos.set(contratos);
-
-        console.log('Dados retornado:', response.data);
       },
       error: (err) => {
         console.error('Erro ao buscar contratos 2ª via', err);
@@ -77,16 +75,15 @@ export class FaturaSegundaViaService {
     const id = this._contratoSelecionadoId();
     const lista = this.contratosComPendencia();
 
-    if (!lista.length) return undefined; // Se não tem contrato com pendência, retorna undefined
+    if (!lista.length) return undefined;
 
     // Tenta achar o contrato pelo ID. Se undefined, cai no fallback (??) e pega lista[0]
     return (id ? lista.find((c) => c.id === id) : undefined) ?? lista[0];
   });
 
-  // SEPARA A PRÓXIMA FATURA ABERTA
-  // Pega faturas do contrato selecionado, filtra 'Abertas', ordena por data e retorna APENAS a mais antiga/próxima
+  // Filtra 'Abertas', ordena por data e retorna APENAS a mais antiga/próxima
   readonly faturasAbertas = computed<Fatura[]>(() => {
-    const faturas = this.contratoSelecionado()?.faturas ?? []; // Fallback se não houver contrato
+    const faturas = this.contratoSelecionado()?.faturas ?? [];
     const anoAtual = new Date().getFullYear();
     const mesAtual = new Date().getMonth();
 
@@ -100,8 +97,7 @@ export class FaturaSegundaViaService {
       .slice(0, 1);
   });
 
-  // SEPARA AS FATURAS ATRASADAS
-  // Pega faturas do contrato selecionado e filtra aquelas que já venceram (status ou data)
+  // FATURAS ATRASADAS
   readonly faturasAtrasadas = computed<Fatura[]>(() => {
     const hoje = new Date();
     const faturas = this.contratoSelecionado()?.faturas ?? [];

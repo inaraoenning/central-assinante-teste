@@ -17,18 +17,14 @@ export class AuthService {
   private readonly TOKEN_KEY = 'TOKEN';
   private readonly CLIENTE_KEY = 'CLIENTE';
 
-  // Private para não sofrer alterações com set de fora
   private usuarioLogadoSignal = signal<any | null>(this.getStoredCliente());
   private clienteAtualSignal = signal<boolean>(this.checkInitialAuth());
 
-  // Expondo sinais publicos somente para leitura
+  // sinais somente leitura
   readonly usuarioAtual = computed(() => this.usuarioLogadoSignal());
   readonly estaLogado = computed(() => this.clienteAtualSignal());
 
-  // login.
-  // Lida automaticamente com a descoberta de ID de empresa se o sistema
-  // operado sob modo `dominio` ainda não sabe o idEmpresa ou DB.
-
+  // `dominio` não sabe idEmpresa ou DB.
   login(model: { username: string; password?: string }): Observable<AppLoginResponse> {
     const cleanUsername = model.username.replace(/\D/g, '');
     const empresa = this.empresaService.empresaAtiva();
@@ -43,7 +39,7 @@ export class AuthService {
             return throwError(() => new Error('Nenhuma conta encontrada para este CPF/CNPJ.'));
           }
 
-          // Tenta encontrar na lista a empresa que tenha o mesmo domínio acessando
+          // Tenta encontrar na lista a empresa que tem o mesmo domínio
           const provedorEncontrado = lista.find((p: any) => p.dominio === empresa?.dominio);
 
           if (!provedorEncontrado) {
@@ -66,15 +62,13 @@ export class AuthService {
       );
     }
 
-    // Se já tiver empresa identificada, vai direto para requisitar Token
+    // empresa identificada -> requisitar Token
     return this.validateCredentials({
       username: cleanUsername,
       password: model.password,
       dominio: empresa?.dominio || window.location.hostname,
     });
   }
-
-  // Disparo final do POST de login no back-end.
 
   validateCredentials(model: {
     username: string;
@@ -118,7 +112,6 @@ export class AuthService {
       this.usuarioLogadoSignal.set(cliente);
     }
 
-    // Só consolida a empresa localmente quando tiver certeza que autenticou
     this.empresaService.salvarNoStorage();
     this.clienteAtualSignal.set(true);
 
@@ -130,9 +123,10 @@ export class AuthService {
   }
 
   logout(): void {
-    const modo = this.empresaService.modo();
     sessionStorage.clear();
     localStorage.removeItem('@App:clienteInfo'); // Limpa cache do cliente anterior
+    localStorage.removeItem('@App:contratos'); // Limpa cache de contratos
+    localStorage.removeItem('@App:contratos:ts');
     this.empresaService.limparStorage(); // Remove empresa cacheada
     this.empresaService.resetarParaGenerico(); // Limpa cor da empresa
     this.usuarioLogadoSignal.set(null);
