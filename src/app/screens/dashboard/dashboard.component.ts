@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     //Aciona a busca na API quando o componente é criado
-    private notificacaoService: NotificacaoService,
+    //private notificacaoService: NotificacaoService,
     private clientService: ClienteService,
   ) {}
 
