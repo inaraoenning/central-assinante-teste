@@ -35,15 +35,15 @@ export class ThemeService {
 
     // No DaisyUI v4+, a cor não pode ser HEX. Deve ser repassada como os três parâmetros espaçados do formato OKLCH
 
-    // 1. Aplicando para as classes PRIMARY (bg-primary, text-primary, etc)
+    // classes PRIMARY (bg-primary, text-primary, etc)
     root.style.setProperty('--p', oklchSyntax);
     root.style.setProperty('--pf', oklchSyntax);
 
-    // 2. Aplicando para as classes SECONDARY (bg-secondary, text-secondary, etc)
+    // classes SECONDARY (bg-secondary, text-secondary, etc)
     root.style.setProperty('--s', oklchSyntax);
     root.style.setProperty('--sf', oklchSyntax);
 
-    // 3. Garantir que o texto sobre essas cores (primária/secundária) seja legível (branco ou preto)
+    // Garantir que o texto sobre essas cores (primária/secundária) seja legível (branco ou preto)
     const contrastColor = this.corClara(cor) ? '0 0 0' : '1 0 0';
     root.style.setProperty('--pc', contrastColor); // Conteúdo sobre o Primary
     root.style.setProperty('--sc', contrastColor); // Conteúdo sobre o Secondary

@@ -7,8 +7,10 @@ import { AuthService } from '../auth/auth.service';
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  if (auth.estaLogado()) return true;
-  return router.createUrlTree(['/login']);
+  if (!auth.estaLogado()) {
+    return router.createUrlTree(['/login']);
+  }
+  return true;
 };
 
 // CanActivateFn - transforma o Guard em uma simples variável que guarda uma função

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EmpresaService } from '../../core/auth/empresa.service';
+import { EmpresaService } from '../../core/services/empresa.service';
 
 @Component({
   selector: 'app-suporte',
@@ -11,10 +11,6 @@ import { EmpresaService } from '../../core/auth/empresa.service';
 export class SuporteComponent {
   private empresaService = inject(EmpresaService);
   empresa = this.empresaService.empresaAtiva;
-
-  // Estado para o teste de conexão
-  testandoConexao = signal(false);
-  resultadoConexao = signal<string | null>(null);
 
   get suporte() {
     const e = this.empresa();
@@ -92,28 +88,5 @@ export class SuporteComponent {
     ];
 
     return items;
-  }
-
-  testarConexao() {
-    this.testandoConexao.set(true);
-    this.resultadoConexao.set('Medindo latência...');
-
-    const startTime = Date.now();
-
-    // Chamamos o endpoint Index da CentralController que retorna estatísticas básicas do servidor
-    this.empresaService['http']
-      .get(`${this.empresaService.apiUrl}central`, { observe: 'response' })
-      .subscribe({
-        next: () => {
-          const latency = Date.now() - startTime;
-          this.testandoConexao.set(false);
-          this.resultadoConexao.set(`Conexão Estável (${latency}ms)`);
-        },
-        error: (err: any) => {
-          console.error('Erro no teste de conexão:', err);
-          this.testandoConexao.set(false);
-          this.resultadoConexao.set('Erro de conexão com o servidor');
-        },
-      });
   }
 }

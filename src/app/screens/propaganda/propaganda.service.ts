@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Propaganda } from '../../models/propaganda.model';
-import { EmpresaService } from '../../core/auth/empresa.service';
+import { EmpresaService } from '../../core/services/empresa.service';
 
 @Injectable({ providedIn: 'root' })
 export class PropagandaService {

@@ -32,7 +32,7 @@ export class RecuperarComponent {
     const cpfCnpj = this.cpfCnpj.replace(/\D/g, '');
     const empresa = this.recuperarService['empresaService'].empresaAtiva();
 
-    // 1. Precisamos descobrir o idCliente (código) e validar o email, igual ao ProvedorApp
+    // Descobrir o idCliente (código) e validar o email, igual ao ProvedorApp
     const apiUrl = this.recuperarService['empresaService'].apiUrl;
     this.recuperarService['http']
       .get<any>(`${apiUrl}app/auth/provedores/${cpfCnpj}?agrupado=true`)

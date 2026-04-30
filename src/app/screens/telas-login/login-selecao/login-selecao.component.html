@@ -40,7 +40,7 @@
             />
           </div>
 
-          @if (errorMessage) {
+          @if (errorMessage()) {
             <div class="alert alert-error py-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@
                   d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span class="text-sm">{{ errorMessage }}</span>
+              <span class="text-sm">{{ errorMessage() }}</span>
             </div>
           }
 
@@ -63,11 +63,11 @@
             <button
               type="button"
               class="btn btn-primary w-full"
-              [disabled]="loading"
+              [disabled]="loading()"
               (click)="onSubmit()"
               id="btn-buscar-empresa"
             >
-              @if (loading) {
+              @if (loading()) {
                 <span class="loading loading-spinner loading-sm"></span>
                 Buscando...
               } @else {
@@ -150,7 +150,7 @@
           <button
             type="button"
             class="btn btn-ghost btn-sm w-full mt-2 text-base-content/50"
-            (click)="provedores.set([]); username = ''"
+            (click)="provedores.set([]); username.set('')"
           >
             ← Buscar outro CPF/CNPJ
           </button>

@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-base-200 flex flex-col items-center justify-center py-6">
+  <div class="flex">
+    <div class="card w-full max-w-sm shadow-xl bg-base-100">
+      <div class="card-body">
+        <!-- Logo Dynamic -->
+        <div class="text-center">
+          @if (empresaService.empresaAtiva(); as emp) {
+            @if (emp.logoUrl) {
+              <img [src]="emp.logoUrl" alt="Logo" class="mx-auto h-20 object-contain mb-3" />
+            } @else {
+              <div
+                class="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mx-auto"
+              >
+                <span class="text-secondary-content font-bold text-2xl">
+                  {{ emp.nomeAmigavelEmpresa?.charAt(0) || 'D' }}
+                </span>
+              </div>
+            }
+            <h1 class="text-2xl font-bold pt-4">
+              {{ emp.nomeAmigavelEmpresa ? emp.nomeAmigavelEmpresa : 'Fatura Rápida' }}
+            </h1>
+          } @else {
+            <div
+              class="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mx-auto mb-3"
+            >
+              <span class="text-secondary-content font-bold text-2xl">...</span>
+            </div>
+            <h1 class="text-2xl font-bold">Carregando...</h1>
+          }
+          @if (!mostrarFaturas()) {
+            <p class="text-sm text-base-content/60 mt-1">
+              Consulte e pague seus boletos informando apenas o CPF ou CNPJ.
+            </p>
+          }
+        </div>
+
+        @if(mostrarFaturas()){
+          <span class="opacity-50 text-center font-semibold text-sm">{{empresaService.empresaAtiva()?.cnpjEmpresa}}</span>
+          <div class="flex justify-between items-center mt-5 text-start">
+  <h3 class="font-bold">{{empresaService.empresaAtiva()?.nomeCliente}}</h3>
+  <span class="opacity-50 font-semibold text-sm">{{empresaService.empresaAtiva()?.idCliente}}</span>
+</div>
+
+        }
+        <!-- Formulário (Exibido somente quando não há dados carregados) -->
+        @if (!mostrarFaturas()) {
+          <form
+            (ngSubmit)="mostrarTelefone() ? verificarCliente() : Acessar()"
+            #regForm="ngForm"
+            class="max-w-sm mx-auto w-full"
+          >
+            <div class="form-control">
+              <label class="label"><span class="label-text">CPF / CNPJ</span></label>
+              <input
+                type="text"
+                name="cpfcnpj"
+                [(ngModel)]="cpfcnpj"
+                [required]="true"
+                [disabled]="mostrarTelefone()"
+                placeholder="Apenas números"
+                mask="000.000.000-00||00.000.000/0000-00"
+                [showMaskTyped]="false"
+                [clearIfNotMatch]="true"
+                [dropSpecialCharacters]="false"
+                class="input input-bordered w-full"
+              />
+              @if (mostrarTelefone()) {
+                <div class="divider pt-2 gap-0 text-sm text-base-content/60 text-center position-relative justify-center">
+                  Informe os 4 últimos dígitos do telefone cadastrado
+                </div>               
+                <div class="form-control">
+                  <input
+                    type="text"
+                    name="telefone"
+                    [(ngModel)]="telefoneInserido"
+                    [required]="true"
+                    placeholder="Digite apenas os 4 últimos dígitos"
+                    mask="0000"
+                    [showMaskTyped]="false"
+                    [clearIfNotMatch]="true"
+                    [dropSpecialCharacters]="true"
+                    class="input input-bordered w-full"
+                  />
+                </div>
+              }
+            </div>
+            @if (errorMessage()) {
+              <div class="alert alert-error mt-3 py-2">
+                <span class="text-sm">{{ errorMessage() }}</span>
+              </div>
+            }
+            <div class="form-control mt-6 border-b border-base-200 pb-6">
+              <button type="submit" class="btn btn-primary w-full" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="loading loading-spinner loading-sm"></span>
+                }
+                @if (mostrarTelefone()) {
+                  Ver Faturas
+                } @else {
+                  Avançar
+                }
+              </button>
+            </div>
+            <div class="text-center mt-6">
+              <a routerLink="/login" class="btn btn-ghost">Voltar para o Login (completo)</a>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+    @if (mostrarFaturas()) {      
+      <button class="absolute top-10 right-10 btn btn-circle btn-outline" (click)="irParaLogin()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+
+      
+    }
+  </div>
+
+  @if (mostrarFaturas()) {
+     @if (loading()) {
+        <span class="loading loading-spinner loading-sm"></span>
+      } @else {
+    <div class="pb-10 font-sans animate-fade-in max-w-6xl mx-auto px-0 md:px-4">
+      <app-fatura-segunda-via></app-fatura-segunda-via>
+    </div>
+      }
+  
+  }
+</div>

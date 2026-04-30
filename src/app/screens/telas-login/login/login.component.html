@@ -128,20 +128,16 @@
   <!-- Footer dinâmico -->
   @if (empresaService.empresaAtiva(); as emp) {
     <div class="mt-10 text-center text-sm text-base-content/60">
-      <p class="mt-1 font-bold">{{ emp.nomeAmigavel || emp.nomeAmigavelEmpresa }}<br /></p>
-      <hr class="border-base-300 w-48 mx-auto my-4" />
-      @if (emp.cidade) {
-        <p>
-          {{ emp.cidade }}{{ emp.uf ? ', ' + emp.uf : '' }}<br />
-          {{ emp.endereco }}{{ emp.bairro ? ' - ' + emp.bairro : '' }}
+      <p class="mt-1 font-bold text-lg">{{ emp.cidadeEmpresa }} {{ emp.ufEmpresa}}</p>
+        <p>          
+          {{ emp.enderecoEmpresa }} - {{ emp.bairroEmpresa}}
         </p>
-      }
-      <p>{{ emp.suporteEmpresa }} - {{ emp.telefoneEmpresa }}<br /></p>
-      <p class="mt-1">{{ emp.emailEmpresa }}</p>
+      <!-- <p>{{ emp.suporteEmpresa }} - {{ emp.telefoneEmpresa }}<br /></p> -->
+      <!-- <p class="mt-1">{{ emp.emailEmpresa }}</p> -->
       <hr class="border-base-300 w-48 mx-auto my-4" />
-      @if (emp.cnpjEmpresa) {
-        <p>CNPJ: {{ emp.cnpjEmpresa }}<br /></p>
-      }
+      <p>Telefone: {{ emp.suporteEmpresa }}<br /></p>
+      <p>Email: {{ emp.emailEmpresa }}<br /></p>
+      
     </div>
   }
 </div>

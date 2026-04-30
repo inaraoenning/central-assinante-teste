@@ -6,5 +6,5 @@
 export const environment = {
   production: false,
   apiUrl: 'https://api.cpsadmin.com.br/',
-  //apiUrl: 'http://localhost:56826/api/',
+  //apiUrl: 'http://localhost:5000/',
 };

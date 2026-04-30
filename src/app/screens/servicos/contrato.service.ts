@@ -4,7 +4,7 @@ import { Observable } from 'rxjs'; // para lidar com requisições assíncronas
 import { tap, finalize, map } from 'rxjs/operators'; // para lidar com efeitos colaterais
 import { Contrato } from '../../models/contrato.model';
 import { ContratoDto } from '../../types/contrato.types';
-import { EmpresaService } from '../../core/auth/empresa.service';
+import { EmpresaService } from '../../core/services/empresa.service';
 
 // O decorador @Injectable avisa ao Angular que esta classe é um Serviço.
 // 'providedIn: root' - este serviço é um Singleton: o Angular cria
@@ -43,9 +43,9 @@ export class ContratoService {
         return listaBruta.map((item) => new Contrato(item));
       }),
       // TAP pega a resposta, guarda no localStorage e atualiza o Signal
-      tap((contratosInteligentes) => {
-        this._contratos.set(contratosInteligentes);
-        this._contratoSelecionado.set(contratosInteligentes[0]);
+      tap((contratos) => {
+        this._contratos.set(contratos);
+        this._contratoSelecionado.set(contratos[0]);
       }),
 
       // Finalize - EXECUTA SEMPRE, (sucesso ou erro)

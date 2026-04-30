@@ -1,7 +1,5 @@
-<div class="pb-10 pr-0">
-  <!-- Page title -->
-
-  <div class="flex justify-between items-center mb-6">
+<div class="pb-10">
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
     <h1 class="text-2xl font-bold tracking-tight text-base-content">Início</h1>
     <div class="animate-pulse">
       @if (cliente()) {
@@ -56,7 +54,7 @@
     </div>
   </div>
 
-  <div class="flex">
+
     <div class="flex flex-col gap-6">
       <!-- Desbloqueio de Internet -->
       @if (cliente()?.bloqueado) {
@@ -91,11 +89,11 @@
       <app-propaganda></app-propaganda>
 
       <!-- Cards Principais -->
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex flex-wrap gap-5">
         @for (sec of sections; track sec.value; let i = $index) {
           <a
             [routerLink]="sec.link"
-            class="flex w-full gap-4 px-[20px] py-[16px] bg-base-200 rounded-xl shadow"
+            class="flex sm:w-[275px] w-full gap-4 items-center align-middle px-9 py-4 bg-base-200 rounded-xl shadow"
           >
             <div class="stat-figure text-secondary">
               <svg
@@ -121,8 +119,12 @@
         }
       </div>
 
-      @if (!isLoading()) {
-        <div class="card bg-base-300 rounded-field bg-gradient-to-r from-primary to-[#005ade]">
+      @if(isLoading()){
+<div class="card w-full flex-col gap-4">
+          <div class="skeleton h-48 w-full"></div>
+        </div>
+      }@else {
+<div class="card bg-base-300 rounded-field bg-gradient-to-r from-primary to-[#005ade]">
           <div class="card-body">
             <div class="flex flex-row justify-between items-center pb-2">
               <span class="font-bold text-primary-content">Plano Contratado</span>
@@ -133,7 +135,7 @@
             <h2
               class="card-title text-2xl md:text-4xl text-primary-content font-black tracking-wider py-1"
             >
-              {{ contratoService.contratoSelecionado()?.plano }}
+              {{ contratoService.contratos()[0]?.plano}}
             </h2>
 
             <div class="pt-2">
@@ -147,11 +149,10 @@
             </div>
           </div>
         </div>
-      } @else {
-        <div class="card w-full flex-col gap-4">
-          <div class="skeleton h-48 w-full"></div>
-        </div>
       }
+      
+        
+      
       <!-- Consumo Internet  -->
       <!-- <div class="grid gap-4 mb-6"> -->
       <!-- Gráfico de Barras -->
@@ -170,5 +171,5 @@
       <!-- </div> -->
     </div>
     <!-- <div class="hidden lg:block lg:w-16"></div> -->
-  </div>
+
 </div>

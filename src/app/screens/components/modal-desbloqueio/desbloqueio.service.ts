@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EmpresaService } from '../../../core/auth/empresa.service';
+import { EmpresaService } from '../../../core/services/empresa.service';
 import {
   DesbloqueioTemporarioRequest,
   DesbloqueioTemporarioResponse,

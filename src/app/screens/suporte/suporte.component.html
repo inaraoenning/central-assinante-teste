@@ -13,13 +13,13 @@
         </div>
         <div class="flex flex-col">
           <h3 class="text-lg font-black text-base-content">
-            {{ e.nomeAmigavel || e.nome || e.nomeEmpresa }}
+            {{ e.nomeAmigavelEmpresa }}
           </h3>
           <p class="text-sm font-bold text-base-content/50 uppercase tracking-widest mt-1">
             {{ e.cnpjEmpresa }}
           </p>
         </div>
-        <div class="text-center md:text-right">
+        <div class="text-center md:text-right md:ml-auto">
           <p class="text-md font-black text-base-content/30 tracking-tighter">Website</p>
           <div class="badge badge-primary font-black uppercase text-xs tracking-widest">
             <a href="https://{{ e.dominio }}" target="_blank" rel="noopener">{{ e.dominio }}</a>
@@ -30,56 +30,7 @@
   }
 
   <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
-    @for (sup of suporte; track sup.id) {
-      @if (sup.id === 'teste') {
-        <!-- Card Especial de Teste de Conexão -->
-        <div
-          (click)="testarConexao()"
-          class="card bg-base-100 shadow hover:shadow-xl cursor-pointer hover:-translate-y-1 transition-all duration-300 border-2 border-info/20 group relative overflow-hidden"
-        >
-          <div class="card-body p-6">
-            <div class="flex items-center gap-5">
-              <div
-                class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all bg-info/10 text-info group-hover:scale-110"
-              >
-                @if (testandoConexao() && 'SpeedTest') {
-                  <span class="loading loading-spinner loading-md"></span>
-                } @else {
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-radio-icon lucide-radio"
-                  >
-                    <path d="M16.247 7.761a6 6 0 0 1 0 8.478" />
-                    <path d="M19.075 4.933a10 10 0 0 1 0 14.134" />
-                    <path d="M4.925 19.067a10 10 0 0 1 0-14.134" />
-                    <path d="M7.753 16.239a6 6 0 0 1 0-8.478" />
-                    <circle cx="12" cy="12" r="2" />
-                  </svg>
-                }
-              </div>
-              <div>
-                <h3 class="text-lg font-bold text-base-content leading-tight">{{ sup.titulo }}</h3>
-                <p
-                  class="text-sm font-semibold transition-all"
-                  [class.text-info]="!testandoConexao()"
-                  [class.animate-pulse]="testandoConexao()"
-                >
-                  {{ sup.valor }}
-                </p>
-              </div>
-            </div>
-            <p class="text-xs text-base-content/50 font-bold mt-4">{{ sup.descricao }}</p>
-          </div>
-        </div>
-      } @else {
+    @for (sup of suporte; track sup.id) {      
         <!-- Cards de Contato Padrão -->
         <a
           [href]="sup.href"
@@ -114,7 +65,7 @@
             <p class="text-xs text-base-content/50 font-bold mt-4">{{ sup.descricao }}</p>
           </div>
         </a>
-      }
+      
     }
     <!-- Speedtest Fixo-->
     <a

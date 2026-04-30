@@ -3,7 +3,7 @@ import { FaturaDto } from './fatura.types';
 export interface EmpresaDto {
   idEmpresa: number;
   nome: string;
-  nomeAmigavel?: string;
+  nomeAmigavelEmpresa?: string;
   cnpj?: string;
   site?: string;
 }

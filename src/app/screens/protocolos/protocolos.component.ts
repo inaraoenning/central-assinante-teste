@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth/auth.service';
-import { EmpresaService } from '../../core/auth/empresa.service';
+import { EmpresaService } from '../../core/services/empresa.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({

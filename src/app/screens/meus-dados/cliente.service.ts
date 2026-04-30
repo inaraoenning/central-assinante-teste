@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { AtualizarContatoDto } from '../../types/cliente.types';
-import { EmpresaService } from '../../core/auth/empresa.service';
+import { EmpresaService } from '../../core/services/empresa.service';
 import { Cliente } from '../../models/cliente.model';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class ClienteService {
   private _clienteAtual = signal<Cliente | undefined>(this.carregarDoCache()); // Só o próprio ClienteService tem a chave para alterar os dados usando o .set().
 
   // 2. Variável apenas leitura para as telas importarem
-  public clienteAtual = computed(() => this._clienteAtual()); //Qualquer tela (Dashboard, Cabeçalho, Perfil) pode olhar para o clienteAtual()
+  readonly clienteAtual = computed(() => this._clienteAtual()); //Qualquer tela (Dashboard, Cabeçalho, Perfil) pode olhar para o clienteAtual()
 
   // Recupera do Storage para hidratar a tela instantaneamente
   // se o JSON estiver corrompido, o sistema ignora,

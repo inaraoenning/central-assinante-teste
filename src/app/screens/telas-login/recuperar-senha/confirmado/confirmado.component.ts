@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RecuperarService } from '../recuperar/recuperar.service';
-import { EmpresaService } from '../../../../core/auth/empresa.service';
+import { EmpresaService } from '../../../../core/services/empresa.service';
 
 @Component({
   selector: 'app-confirmado',

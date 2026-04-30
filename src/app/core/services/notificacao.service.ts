@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Notificacao } from '../../models/notificacao.model';
-import { EmpresaService } from '../auth/empresa.service';
+import { EmpresaService } from './empresa.service';
 
 @Injectable({
   providedIn: 'root',

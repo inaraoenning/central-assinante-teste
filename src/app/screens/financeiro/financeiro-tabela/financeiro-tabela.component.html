@@ -1,0 +1,207 @@
+<div class="card w-full bg-base-100 shadow-xl overflow-hidden rounded-3xl border border-base-200">
+
+  <!-- Card Header -->
+  <div class="p-6 sm:p-8 border-b border-base-200/60 bg-base-50 flex flex-col">
+    <div class="flex justify-between items-start">
+      <h3 class="flex-col md:flex-row text-xs sm:text-sm md:text-md xl:text-lg font-bold flex gap-1">
+        {{ titulo() }}
+        @if (contrato()) {
+          <span class="text-base-content/40 text-xs sm:text-sm md:text-md xl:text-lg font-medium">
+            ({{ contrato()!.id }})
+          </span>
+        }
+      </h3>
+      <div class="badge badge-xs py-5 sm:py-4 px-6 md:px-8 font-bold shadow-md gap-2">
+        <div class="text-xs sm:text-sm md:text-md xl:text-lg text-center md:text-start">
+          {{ faturas()[0]?.pagamento ?? '—' }}
+        </div> 
+      </div>
+    </div>
+
+    @if (contrato()) {
+      <div class="text-xs sm:text-sm md:text-md font-semibold text-base-content/60 flex gap-3 mt-3">
+        Endereço de Instalação: {{ contrato()!.enderecoInstalacao }}
+      </div>
+      <div class="text-xs sm:text-sm md:text-md font-semibold text-base-content/60">
+        Plano: {{ contrato()!.plano }}
+      </div>
+    }
+  </div>
+
+  <!-- Tabela ou Empty State -->
+  @if (faturas().length > 0) {
+    <div class="overflow-x-auto">
+      <table class="table table-md w-full">
+        <thead class="bg-base-200/50 text-base-content font-black uppercase text-[10px] tracking-widest border-b border-base-200">
+          <tr>
+            <th class="py-6">Titulo</th>
+            <th>Valor</th>
+            <th class="py-6 text-center">Vencimento</th>
+            <th class="py-6 text-center">Referência</th>
+            <th class="text-center">
+              {{ faturas().some(f => f.pago) ? 'Data Pagamento' : '2ª Via' }}
+            </th>
+            @if (temNotaFiscal()) {
+              <th class="text-center">Nota Fiscal</th>
+            }
+            <th class="text-center">Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of faturas(); track f.idTitulo) {
+            <tr
+              class="hover:bg-base-200/30 transition-colors border-b border-base-100 last:border-0"
+              [class.opacity-50]="f.pago"
+            >
+              <td class="py-6 font-bold">{{ f.idTitulo }}</td>
+              <td class="font-black">{{ f.valor | currency: 'BRL' }}</td>
+              <td class="py-6 font-bold text-center">{{ f.vencimento | date: 'dd/MM/yyyy' }}</td>
+              <td class="py-6 font-bold text-center">{{ f.referenciaFormatada }}</td>
+
+              <!-- 2ª Via / Data Pagamento -->
+              <td class="py-6 font-bold">
+                @if (!f.pago) {
+                  @if (f.isBoleto) {
+                    <div class="flex gap-4 justify-center">
+                      <!-- Imprimir Boleto -->
+                      <a (click)="financeiroService.openBoleto(f)"
+                         class="hover:text-success cursor-pointer tooltip"
+                         data-tip="Imprimir Boleto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-printer">
+                          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                          <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/>
+                          <rect x="6" y="14" width="12" height="8" rx="1"/>
+                        </svg>
+                      </a>
+                      <!-- Copiar Linha Digitável -->
+                      <a (click)="financeiroService.copiarCodigoBarras(f)"
+                         class="hover:text-success cursor-pointer tooltip"
+                         data-tip="Copiar Código de Barras">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-clipboard-copy">
+                          <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/>
+                          <path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                          <path d="M16 4h2a2 2 0 0 1 2 2v4"/>
+                          <path d="M21 14H11"/>
+                          <path d="m15 10-4 4 4 4"/>
+                        </svg>
+                      </a>
+                      <!-- Copiar PIX -->
+                      @if (f.textoImagemQRcodePix) {
+                        <a (click)="financeiroService.copiarCodigoPix(f)"
+                           class="hover:text-success cursor-pointer tooltip"
+                           data-tip="Copiar Código PIX">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                               class="lucide lucide-qr-code">
+                            <rect width="5" height="5" x="3" y="3" rx="1"/>
+                            <rect width="5" height="5" x="16" y="3" rx="1"/>
+                            <rect width="5" height="5" x="3" y="16" rx="1"/>
+                            <path d="M21 16h-3a2 2 0 0 0-2 2v3"/>
+                            <path d="M21 21v.01"/>
+                            <path d="M12 7v3a2 2 0 0 1-2 2H7"/>
+                            <path d="M3 12h.01"/>
+                            <path d="M12 3h.01"/>
+                            <path d="M12 16v.01"/>
+                            <path d="M16 12h1"/>
+                            <path d="M21 12v.01"/>
+                            <path d="M12 21v-1"/>
+                          </svg>
+                        </a>
+                      }
+                    </div>
+                  }
+                } @else {
+                  <div class="disabled font-medium p-2 text-xs text-center">
+                    Pago em {{ f.dataPago | date: 'dd/MM/yyyy' }}
+                  </div>
+                }
+              </td>
+
+              <!-- Nota Fiscal -->
+              @if (temNotaFiscal()) {
+                <td class="text-center">
+                  <div class="flex justify-center gap-2">
+                    @if (f.pago && f.visualizarBoleto && f.hashNfcom && financeiroService.mostrarNfMap().get(f.idTitulo)) {
+                      <a (click)="financeiroService.openNFcom(f)"
+                         class="hover:text-success cursor-pointer tooltip"
+                         data-tip="Imprimir Nota Fiscal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="lucide lucide-file-text">
+                          <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>
+                          <path d="M14 2v5a1 1 0 0 0 1 1h5"/>
+                          <path d="M10 9H8"/>
+                          <path d="M16 13H8"/>
+                          <path d="M16 17H8"/>
+                        </svg>
+                      </a>
+                    } @else {
+                      <div>-</div>
+                    }
+                    @if (f.pago && f.visualizarBoleto && f.hashNF) {
+                      <a (click)="financeiroService.openNF(f)"
+                         class="btn btn-square btn-sm btn-ghost" title="Nota Fiscal">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                      </a>
+                    }
+                    @if (f.pago && f.visualizarBoleto && f.hashNFS) {
+                      <a (click)="financeiroService.openNFS(f)"
+                         class="btn btn-square btn-sm btn-ghost" title="NF de Serviço">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                      </a>
+                    }
+                  </div>
+                </td>
+              }
+
+              <!-- Situação -->
+              <td>
+                <div
+                  class="badge text-white font-bold text-[10px] py-3 tracking-wider border-2 w-full text-center"
+                  [class.badge-error]="f.statusParaUI === 'vencida'"
+                  [class.badge-info]="f.statusParaUI === 'aberta'"
+                  [class.badge-success]="f.statusParaUI === 'paga'"
+                  [class.border-error/20]="f.statusParaUI === 'vencida'"
+                  [class.border-info/20]="f.statusParaUI === 'aberta'"
+                  [class.border-success/20]="f.statusParaUI === 'paga'"
+                >
+                  {{ f.labelStatus }}
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <!-- Empty State -->
+    <div class="flex justify-center items-center gap-3 py-5 text-base-content/40">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <div class="flex flex-col">
+        <span class="font-semibold text-sm">Nenhuma fatura encontrada</span>
+        <span class="text-xs">Não há faturas nos últimos 12 meses</span>
+      </div>
+    </div>
+  }
+
+</div>

@@ -13,13 +13,9 @@ export class InformacaoComponent implements OnInit {
   public contratoService = inject(ContratoService); // Injetar o service para acessar os dados
   private clienteService = inject(ClienteService);
 
-  // codigo cliente
   codigoCliente = computed(() => this.contratoService.contratoSelecionado()?.codigoCliente);
-  // hash contrato
   hashContrato = computed(() => this.contratoService.contratoSelecionado()?.hashContrato);
-  // cliente
   cliente = computed(() => this.clienteService.clienteAtual());
-
   isLoading = computed(() => this.contratoService.isLoading());
 
   // link para baixar o contrato

@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EmpresaService } from '../../../../core/auth/empresa.service';
+import { EmpresaService } from '../../../../core/services/empresa.service';
 import { RecuperarRequest } from '../../../../types/empresa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -17,12 +17,11 @@ export class RecuperarService {
     return this.empresaService.apiUrl;
   }
 
-  /**
-   * Solicita recuperação de senha.
-   * Novo endpoint: POST /mail/SendRecuperarSenhaDynamic
-   * O backend busca o email do cliente e envia o link sozinho.
-   * Payload: { db, codigo, cpfCnpj }
-   */
+  // Recuperação de senha.
+  // POST /mail/SendRecuperarSenhaDynamic
+  // O backend busca o email do cliente e envia o link sozinho.
+  // Payload: { db, codigo, cpfCnpj }
+
   enviarRecuperacaoSenha(cliente: RecuperarRequest): Observable<any> {
     const db = this.empresaService.empresaAtiva()?.db || cliente.db || 'v1';
 

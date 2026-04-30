@@ -103,4 +103,26 @@ export class Fatura {
       case 'paga': return 'checkmark-circle';
     }
   }
+
+  // REGRA DE NEGÓCIO: Forma de pagamento é boleto
+  get isBoleto(): boolean {
+    return (
+      this.idPagamento == 21 ||
+      this.idPagamento == 23 ||
+      this.idPagamento == 24 ||
+      this.idPagamento == 26 ||
+      this.pagamento?.toLowerCase().includes('boleto')
+    );
+  }
+
+  // REGRA DE NEGÓCIO: Formata mesAno (ex: 42024) → "04/2024"
+  get referenciaFormatada(): string {
+    if (!this.mesAno) return '';
+    const valor = this.mesAno.toString().padStart(5, '0');
+    const ano = valor.slice(-4);
+    const mes = valor.slice(0, valor.length - 4).padStart(2, '0');
+    const mesNum = Number(mes);
+    if (mesNum < 1 || mesNum > 12) return '';
+    return `${mes}/${ano}`;
+  }
 }

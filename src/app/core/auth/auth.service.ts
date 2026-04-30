@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
-import { EmpresaService } from './empresa.service';
+import { EmpresaService } from '../services/empresa.service';
 import { AppLoginResponse } from '../../types/empresa.types';
 
 @Injectable({ providedIn: 'root' })
@@ -25,16 +25,15 @@ export class AuthService {
   readonly usuarioAtual = computed(() => this.usuarioLogadoSignal());
   readonly estaLogado = computed(() => this.clienteAtualSignal());
 
-  /**
-   * Ponto de entrada unificado para login.
-   * Lida automaticamente com a descoberta de ID de empresa se o sistema
-   * operado sob modo `dominio` ainda não souber o idEmpresa ou DB.
-   */
+  // login.
+  // Lida automaticamente com a descoberta de ID de empresa se o sistema
+  // operado sob modo `dominio` ainda não sabe o idEmpresa ou DB.
+
   login(model: { username: string; password?: string }): Observable<AppLoginResponse> {
     const cleanUsername = model.username.replace(/\D/g, '');
     const empresa = this.empresaService.empresaAtiva();
 
-    // Lógica movida do component para descoberta dinâmica via CpfCnpj
+    // Descoberta dinâmica via CpfCnpj
     if (this.empresaService.modo() === 'dominio' && !empresa?.idEmpresa) {
       const apiUrl = this.empresaService.apiUrl;
       return this.http.get<any>(`${apiUrl}app/auth/provedores/${cleanUsername}`).pipe(
@@ -55,14 +54,7 @@ export class AuthService {
 
           this.empresaService.setEmpresaManual({
             ...empresa!,
-            idEmpresa: provedorEncontrado.idEmpresa,
-            db: provedorEncontrado.db,
-            nomeAmigavelEmpresa: provedorEncontrado.nomeAmigavelEmpresa,
-            telefoneEmpresa: provedorEncontrado.telefoneEmpresa,
-            suporteEmpresa: provedorEncontrado.suporteEmpresa,
-            emailEmpresa: provedorEncontrado.emailEmpresa,
-            cnpjEmpresa: provedorEncontrado.cnpjEmpresa,
-            logoUrl: provedorEncontrado.logoUrl,
+            ...provedorEncontrado,
           });
 
           return this.validateCredentials({
@@ -82,9 +74,8 @@ export class AuthService {
     });
   }
 
-  /**
-   * Disparo final do POST de login no back-end.
-   */
+  // Disparo final do POST de login no back-end.
+
   validateCredentials(model: {
     username: string;
     password?: string;
@@ -101,28 +92,6 @@ export class AuthService {
 
     return this.http
       .post<AppLoginResponse>(`${this.empresaService.apiUrl}app/auth/login`, payload)
-      .pipe(
-        tap((response) => {
-          if (response.success && response.token) {
-            const clienteNormalizado = {
-              ...response.cliente,
-              codigo: response.cliente?.idCliente,
-              cpf_cnpj: response.cliente?.cpfCnpj,
-            };
-            this.logIn(response.token, clienteNormalizado, 0);
-          }
-        }),
-      );
-  }
-
-  //Login direto via token (link externo do provedor).
-  //Endpoint: POST /app/auth/external-login
-  directLogin(model: { username: string; token?: string }): Observable<AppLoginResponse> {
-    return this.http
-      .post<AppLoginResponse>(`${this.empresaService.apiUrl}app/auth/external-login`, {
-        CpfCnpj: model.username,
-        Token: model.token,
-      })
       .pipe(
         tap((response) => {
           if (response.success && response.token) {

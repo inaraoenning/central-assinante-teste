@@ -11,6 +11,6 @@ import { ContratoService } from '../contrato.service';
 })
 @Injectable({ providedIn: 'root' })
 export class ContratoComponent {
-  // Apenas consume o signal — o ServicosComponent pai já chamou buscarContratos()
+  // Apenas consume o signal — o ServicosComponent já chamou buscarContratos()
   public contratoService = inject(ContratoService);
 }

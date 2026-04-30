@@ -7,14 +7,9 @@
       <app-informacao></app-informacao>
     </div>
     @if (contratoService.contratos().length > 1) {
-      <div class="w-full md:w-md h-full p-2 ml-auto">
+      <div class="w-2/4 h-full p-2 ml-auto">
         <app-contrato></app-contrato>
       </div>
-    } @else {
-      <div class="w-fit h-full p-2 ml-auto flex flex-col gap-2">
-        <p class="text-md font-bold text-end">Contrato</p>
-        <p class="font-semibold text-end">{{ contratoService.contratos().map((c) => c.id) }}</p>
-      </div>
-    }
+    } 
   </div>
 </div>

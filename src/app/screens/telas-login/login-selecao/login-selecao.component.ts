@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { EmpresaService } from '../../../core/auth/empresa.service';
+import { EmpresaService } from '../../../core/services/empresa.service';
 import { ProvedorInfo } from '../../../types/empresa.types';
 import { ThemeService } from '../../../core/services/theme.service';
 import { NgxMaskDirective } from 'ngx-mask';
@@ -16,13 +16,12 @@ import { NgxMaskDirective } from 'ngx-mask';
 })
 export class LoginSelecaoComponent implements OnInit {
   private router = inject(Router);
-  private route = inject(Router);
   private http = inject(HttpClient);
   public empresaService = inject(EmpresaService);
 
-  username = '';
-  loading = false;
-  errorMessage = '';
+  username = signal('');
+  loading = signal(false);
+  errorMessage = signal('');
 
   themeService = inject(ThemeService);
 
@@ -40,25 +39,25 @@ export class LoginSelecaoComponent implements OnInit {
 
   // Busca os provedores vinculados ao CPF/CNPJ informado
   onSubmit(): void {
-    if (!this.username) {
-      this.errorMessage = 'Por favor, insira o CPF/CNPJ.';
+    if (!this.username()) {
+      this.errorMessage.set('Por favor, insira o CPF/CNPJ.');
       return;
     }
 
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
     this.provedores.set([]);
 
-    const cpf = this.username.replace(/\D/g, '');
+    const cpf = this.username().replace(/\D/g, '');
     const apiUrl = this.empresaService.apiUrl;
 
     this.http.get<any>(`${apiUrl}app/auth/provedores/${cpf}?agrupado=true`).subscribe({
       next: (res) => {
-        this.loading = false;
+        this.loading.set(false);
         const lista: ProvedorInfo[] = res?.provedores || res?.Provedores || [];
 
         if (lista.length === 0) {
-          this.errorMessage = 'Nenhuma empresa encontrada para este CPF/CNPJ.';
+          this.errorMessage.set('Nenhuma empresa encontrada para este CPF/CNPJ.');
           return;
         }
 
@@ -85,9 +84,9 @@ export class LoginSelecaoComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.loading = false;
+        this.loading.set(false);
         console.error('[LoginSelecao] Erro ao buscar provedores:', err);
-        this.errorMessage = 'Erro ao buscar empresas. Tente novamente.';
+        this.errorMessage.set('Erro ao buscar empresas. Tente novamente.');
       },
     });
   }
@@ -98,16 +97,11 @@ export class LoginSelecaoComponent implements OnInit {
     // para não perdermos os dados que acabamos de receber da API.
     this.empresaService.setEmpresaManual({
       ...provedor,
-      usernameCliente: this.username, // Salva temporariamente o CPF usado para buscar
+      usernameCliente: this.username(), // Salva temporariamente o CPF usado para buscar
     });
 
-    // Cor da empresa antes de mudar para login
-    if (provedor.cor) {
-      this.themeService.applyCorEmpresa(provedor.cor);
-    }
-
     this.router.navigate(['/login'], {
-      queryParams: { cpf: this.username },
+      queryParams: { cpf: this.username() },
     });
   }
 }

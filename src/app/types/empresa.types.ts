@@ -1,3 +1,4 @@
+// Empresa através do CPF/CNPJ Cliente
 export interface ProvedorInfo {
   db: string;
   idEmpresa?: number;
@@ -5,31 +6,46 @@ export interface ProvedorInfo {
   idCliente?: number;
   usernameCliente?: string;
   nomeEmpresa?: string;
-  nome?: string;
-  nomeAmigavel?: string;
   nomeAmigavelEmpresa?: string;
+  cidadeEmpresa: string;
+  ufEmpresa: string;
+  enderecoEmpresa: string;
+  bairroEmpresa: string;
+  cepEmpresa: string;
   telefoneEmpresa?: string;
-  telefone?: string;
-  telefone0800?: string;
   suporteEmpresa?: string;
-  suporte?: string;
   emailEmpresa?: string;
-  email?: string;
   cnpjEmpresa?: string;
   dominio: string;
   logoUrl: string;
   cor?: string;
   nomeCliente?: string;
   emailCliente?: string;
-  cidade?: string;
-  uf?: string;
-  bairro?: string;
-  endereco?: string;
 }
 
 export interface AuthProvedoresResponse {
   cpfCnpj: string;
   provedores: ProvedorInfo[];
+}
+
+// Empresa através do Domínio
+export interface EmpresaDominioResponse {
+  Db: string;
+  IdEmpresa: number;
+  NomeEmpresa: string;
+  NomeAmigavelEmpresa: string;
+  CidadeEmpresa: string;
+  UfEmpresa: string;
+  EnderecoEmpresa: string;
+  CepEmpresa: string;
+  BairroEmpresa: string;
+  TelefoneEmpresa: string;
+  SuporteEmpresa: string;
+  EmailEmpresa: string;
+  CnpjEmpresa?: string;
+  Dominio?: string;
+  LogoUrl?: string;
+  Cor?: string;
 }
 
 export interface AppLoginRequest {

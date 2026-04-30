@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { EmpresaService } from '../../../core/auth/empresa.service';
+import { EmpresaService } from '../../../core/services/empresa.service';
 
 @Component({
   selector: 'app-login',
@@ -13,38 +13,22 @@ import { EmpresaService } from '../../../core/auth/empresa.service';
 })
 export class LoginComponent implements OnInit {
   public empresaService = inject(EmpresaService);
-  public cpfCnpj = inject(ActivatedRoute).snapshot.queryParams['cpf'];
 
   loading = signal(false);
   errorMessage = signal('');
 
+  private route = inject(ActivatedRoute);
+  public cpfCnpj = this.route.snapshot.queryParams['cpf'];
+
   username = this.cpfCnpj ? this.cpfCnpj : '';
   password = '';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   ngOnInit() {
     // Token na URL = direct login (link do provedor), tem prioridade total
     const token = this.route.snapshot.queryParams['token'];
-    if (token) {
-      this.loading.set(true);
-      const urlUsername = this.route.snapshot.queryParams['username'] || '';
-      this.authService.directLogin({ username: urlUsername, token }).subscribe({
-        next: (res) => {
-          if (!res.success) this.errorMessage.set(res.error || 'Falha no login com token');
-          this.loading.set(false);
-        },
-        error: () => {
-          this.errorMessage.set('Erro ao conectar no servidor.');
-          this.loading.set(false);
-        },
-      });
-      return;
-    }
 
     // Se não temos empresa identificada (idEmpresa) e não estamos no modo domínio,
     // então precisamos ir para a tela de seleção por CPF/CNPJ.
@@ -81,13 +65,6 @@ export class LoginComponent implements OnInit {
   }
 
   irPara2ViaBoleto(): void {
-    this.router.navigate(['/login-2-via'], {
-      queryParams: {
-        logoEmpresa: this.empresaService.empresaAtiva()?.logoUrl || '',
-        nomeEmpresa:
-          this.empresaService.empresaAtiva()?.nomeAmigavelEmpresa ||
-          this.empresaService.empresaAtiva()?.nomeAmigavel,
-      },
-    });
+    this.router.navigate(['/login-segunda-via']);
   }
 }

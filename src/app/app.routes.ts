@@ -19,10 +19,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'login-2-via',
+    path: 'login-segunda-via',
     loadComponent: () =>
-      import('./screens/telas-login/login-2-via/login-2-via.component').then(
-        (m) => m.Login2ViaComponent,
+      import('./screens/telas-login/login-segunda-via/login-segunda-via.component').then(
+        (m) => m.LoginSegundaViaComponent,
       ),
   },
   {
