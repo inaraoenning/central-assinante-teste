@@ -1,6 +1,10 @@
 export interface Propaganda {
   id: number;
-  imagem: string;
+  titulo: string;
+  empresa: string;
+  imagemUrl: string;
   link: string;
   ativo: boolean;
+  dataInicio: string;
+  dataFim: string;
 }

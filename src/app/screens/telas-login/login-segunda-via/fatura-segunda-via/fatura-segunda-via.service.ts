@@ -25,15 +25,18 @@ export class FaturaSegundaViaService {
   private readonly _isLoading = signal<boolean>(false);
   private readonly _contratos = signal<Contrato[]>([]);
   private readonly _contratoSelecionadoId = signal<number | null>(null);
+  private readonly _error = signal<string | null>(null);
 
   // Signals segunda-via/login
   readonly isLoading = this._isLoading.asReadonly();
   readonly contratos = this._contratos.asReadonly();
+  readonly error = this._error.asReadonly();
 
   buscarContratosSegundaVia(): void {
     const token = this.loginSegundaViaService.token2Via();
     if (!token) return;
 
+    this._error.set(null);
     this._isLoading.set(true);
 
     const url = `${this.empresaService.apiUrl}app/contratos/detalhado`;
@@ -54,6 +57,7 @@ export class FaturaSegundaViaService {
       },
       error: (err) => {
         console.error('Erro ao buscar contratos 2ª via', err);
+        this._error.set('Não foi possivel carregar as faturas. Por favor, tente novamente.');
         this._isLoading.set(false);
       },
       complete: () => {
@@ -84,17 +88,21 @@ export class FaturaSegundaViaService {
   // Filtra 'Abertas', ordena por data e retorna APENAS a mais antiga/próxima
   readonly faturasAbertas = computed<Fatura[]>(() => {
     const faturas = this.contratoSelecionado()?.faturas ?? [];
-    const anoAtual = new Date().getFullYear();
-    const mesAtual = new Date().getMonth();
+    const hoje = new Date();
+    const anoAtual = hoje.getFullYear();
+    const mesAtual = hoje.getMonth();
 
     return faturas
       .filter((f) => {
         if (f.pago) return false;
         const vencimento = new Date(f.vencimento);
-        return vencimento.getFullYear() === anoAtual && vencimento.getMonth() === mesAtual;
+        return (
+          vencimento.getFullYear() === anoAtual &&
+          vencimento.getMonth() === mesAtual &&
+          vencimento >= hoje
+        );
       })
-      .sort((a, b) => new Date(a.vencimento).getTime() - new Date(b.vencimento).getTime())
-      .slice(0, 1);
+      .sort((a, b) => new Date(a.vencimento).getTime() - new Date(b.vencimento).getTime());
   });
 
   // FATURAS ATRASADAS
@@ -102,15 +110,15 @@ export class FaturaSegundaViaService {
     const hoje = new Date();
     const faturas = this.contratoSelecionado()?.faturas ?? [];
 
-    return faturas.filter(
-      (f) => !f.pago && (f.situacao === 'Vencida' || new Date(f.vencimento) < hoje),
-    );
+    return faturas
+      .filter((f) => !f.pago && (f.situacao === 'Vencida' || new Date(f.vencimento) < hoje))
+      .sort((a, b) => new Date(a.vencimento).getTime() - new Date(b.vencimento).getTime()); // ordenado por data
   });
 
-  // Guarda fatura aberta (MAX 1) com as faturas atrasadas (TODAS)
+  // Guarda todas as fatura do mês + faturas vencidas (TODAS)
   readonly faturasPendentes = computed<Fatura[]>(() => [
-    ...this.faturasAbertas(),
     ...this.faturasAtrasadas(),
+    ...this.faturasAbertas(),
   ]);
 
   setContratoSelecionado(id: number): void {

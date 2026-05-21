@@ -1,8 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/auth/auth.service';
-import { EmpresaService } from '../../core/services/empresa.service';
-import { HttpClient } from '@angular/common/http';
+import { ProtocolosService } from './protocolos.service';
 
 @Component({
   selector: 'app-protocolos',
@@ -11,34 +9,34 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './protocolos.component.html',
 })
 export class ProtocolosComponent implements OnInit {
-  private authService = inject(AuthService);
-  private empresaService = inject(EmpresaService);
-  private http = inject(HttpClient);
+  private service = inject(ProtocolosService);
 
-  user = this.authService.usuarioAtual();
-  data = signal<any[]>([]);
+  // Backend retorna um objeto único com a lista de protocolos dentro
+  dados = signal<ProtocolosClienteResponse | null>(null);
   isLoading = signal<boolean>(false);
+  erro = signal<string | null>(null);
 
   ngOnInit(): void {
-    // this.loadProtocolos();
+    this.carregarProtocolos();
   }
 
-  loadProtocolos() {
-    const cliente = this.user();
-    if (!cliente) return;
+  carregarProtocolos() {
+    this.isLoading.set(true);
+    this.erro.set(null);
 
-    // this.isLoading.set(true);
-    // const url = `${this.empresaService.apiUrl}app/protocolos/${cliente.codigo}`;
-
-    // this.http.get<any[]>(url).subscribe({
-    //   next: (res) => {
-    //     this.data.set(res || []);
-    //     this.isLoading.set(false);
-    //   },
-    //   error: (err) => {
-    //     console.error('Erro ao carregar protocolos:', err);
-    //     this.isLoading.set(false);
-    //   },
-    // });
+    this.service.buscarProtocolos().subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.dados.set(response.data);
+        } else {
+          this.erro.set(response.error || 'Erro ao carregar protocolos');
+        }
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        this.erro.set(error.error?.error || 'Erro na requisição');
+        this.isLoading.set(false);
+      },
+    });
   }
 }

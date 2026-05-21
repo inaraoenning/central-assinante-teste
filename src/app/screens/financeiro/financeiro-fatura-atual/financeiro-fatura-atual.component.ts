@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Fatura } from '../../../models/fatura.model';
 import { FinanceiroService } from '../financeiro.service';
 
-export type FaturaAtualData = {
+export interface FaturaAtualData {
   fatura: Fatura;
   status: 'atrasado' | 'aberto' | 'pago';
-};
+}
 
 @Component({
   selector: 'app-financeiro-fatura-atual',

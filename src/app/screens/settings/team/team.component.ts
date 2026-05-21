@@ -56,7 +56,9 @@ import { CommonModule } from '@angular/common';
                     <td class="text-sm text-base-content/60">{{ member.joined }}</td>
                     <td>
                       <div class="dropdown dropdown-end">
-                        <label tabindex="0" class="btn btn-ghost btn-xs">···</label>
+                        <label for="team-options-{{ member.email }}" class="btn btn-ghost btn-xs"
+                          >···</label
+                        >
                         <ul
                           tabindex="0"
                           class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-36"

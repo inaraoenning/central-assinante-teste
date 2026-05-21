@@ -44,8 +44,8 @@ export class Contrato {
     this.faturas = (data.faturas || []).map((f: FaturaDto) => new Fatura(f));
     this.permiteDesbloqueioTemporario = data.permiteDesbloqueioTemporario;
     this.itensCombo = data.itensCombo || [];
-    this.velocidadeDown = data.velocidadeDown / 1000;
-    this.velocidadeUp = data.velocidadeUp / 1000;
+    this.velocidadeDown = Contrato.arredondarVelocidade(data.velocidadeDown);
+    this.velocidadeUp = Contrato.arredondarVelocidade(data.velocidadeUp);
     this.nomeCliente = data.nomeCliente;
     this.cpfCnpjCliente = data.cpfCnpjCliente;
     this.enderecoInstalacao = data.enderecoInstalacao;
@@ -53,6 +53,16 @@ export class Contrato {
     this.empresa = data.empresa;
     this.equipamentos = data.equipamentos || [];
     this.urlContrato = data.urlContrato;
+  }
+
+  // Converte Kbps → Mbps e arredonda para baixo na casa mais significativa do plano.
+  // Ex: 102000 Kbps → 100 Mbps | 550000 → 500 | 1020000 → 1000 | 52000 → 50
+  private static arredondarVelocidade(kbps: number): number {
+    const mbps = kbps / 1000;
+    if (mbps >= 1000) return Math.floor(mbps / 1000) * 1000;
+    if (mbps >= 100) return Math.floor(mbps / 100) * 100;
+    if (mbps >= 10) return Math.floor(mbps / 10) * 10;
+    return Math.floor(mbps);
   }
 
   get temFaturaVencida(): boolean {

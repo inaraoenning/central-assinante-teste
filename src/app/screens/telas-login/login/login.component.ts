@@ -28,10 +28,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     // Token na URL = direct login (link do provedor), tem prioridade total
-    const token = this.route.snapshot.queryParams['token'];
+    //const token = this.route.snapshot.queryParams['token'];
 
     // Se não temos empresa identificada (idEmpresa) e não estamos no modo domínio,
-    // então precisamos ir para a tela de seleção por CPF/CNPJ.
+    // então precisamos ir para a tela de seleção por CPF/CNPJ
     const empresa = this.empresaService.empresaAtiva();
     if (!empresa?.idEmpresa && this.empresaService.modo() !== 'dominio') {
       this.router.navigate(['/login-selecao']);

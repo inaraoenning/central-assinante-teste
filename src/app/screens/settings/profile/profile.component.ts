@@ -35,23 +35,29 @@ import { FormsModule } from '@angular/forms';
             <h3 class="card-title text-base mb-4">Personal Information</h3>
             <div class="grid grid-cols-2 gap-4">
               <div class="form-control">
-                <label class="label"><span class="label-text">First Name</span></label>
+                <label for="first-name-input" class="label"
+                  ><span class="label-text">First Name</span></label
+                >
                 <input type="text" [(ngModel)]="firstName" class="input input-bordered" />
               </div>
               <div class="form-control">
-                <label class="label"><span class="label-text">Last Name</span></label>
+                <label for="last-name-input" class="label"
+                  ><span class="label-text">Last Name</span></label
+                >
                 <input type="text" [(ngModel)]="lastName" class="input input-bordered" />
               </div>
               <div class="form-control col-span-2">
-                <label class="label"><span class="label-text">Email</span></label>
+                <label for="email-input" class="label"><span class="label-text">Email</span></label>
                 <input type="email" [(ngModel)]="email" class="input input-bordered" />
               </div>
               <div class="form-control">
-                <label class="label"><span class="label-text">Phone</span></label>
+                <label for="phone-input" class="label"><span class="label-text">Phone</span></label>
                 <input type="tel" [(ngModel)]="phone" class="input input-bordered" />
               </div>
               <div class="form-control">
-                <label class="label"><span class="label-text">Location</span></label>
+                <label for="location-input" class="label"
+                  ><span class="label-text">Location</span></label
+                >
                 <input type="text" [(ngModel)]="location" class="input input-bordered" />
               </div>
               <div class="form-control col-span-2">
@@ -72,15 +78,21 @@ import { FormsModule } from '@angular/forms';
             <h3 class="card-title text-base mb-4">Security</h3>
             <div class="grid lg:grid-cols-3 gap-4">
               <div class="form-control">
-                <label class="label"><span class="label-text">Current Password</span></label>
+                <label for="current-password-input" class="label"
+                  ><span class="label-text">Current Password</span></label
+                >
                 <input type="password" placeholder="••••••••" class="input input-bordered" />
               </div>
               <div class="form-control">
-                <label class="label"><span class="label-text">New Password</span></label>
+                <label for="new-password-input" class="label"
+                  ><span class="label-text">New Password</span></label
+                >
                 <input type="password" placeholder="••••••••" class="input input-bordered" />
               </div>
               <div class="form-control">
-                <label class="label"><span class="label-text">Confirm Password</span></label>
+                <label for="confirm-password-input" class="label"
+                  ><span class="label-text">Confirm Password</span></label
+                >
                 <input type="password" placeholder="••••••••" class="input input-bordered" />
               </div>
             </div>

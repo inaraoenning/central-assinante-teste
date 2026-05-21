@@ -30,8 +30,8 @@
       </h1>
     </div>
     <!-- Seletor Tema -->
-    <div class="dropdown dropdown-end z-10">
-      <label tabindex="0" class="btn btn-ghost btn-circle">
+    <div class="dropdown dropdown-end z-10 cursor-pointer" data-tip="Alterar Tema">
+      <div tabindex="0" class="btn btn-ghost btn-circle">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -46,7 +46,7 @@
             d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z"
           />
         </svg>
-      </label>
+      </div>
       <div
         tabindex="0"
         class="dropdown-content bg-base-100 rounded-box z-[1]w-45 p-2 shadow-xl max-h-96 overflow-y-auto flex flex-col gap-1"
@@ -92,7 +92,7 @@
     </button> -->
 
     <!-- Sair -->
-    <div class="dropdown dropdown-end">
+    <div class="cursor-pointer tooltip tooltip-bottom" data-tip="Sair">
       <label onclick="my_modal_1.showModal()" tabindex="0" class="btn btn-ghost btn-circle avatar">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -113,12 +113,12 @@
       </label>
       <!-- modal -->
       <dialog id="my_modal_1" class="modal">
-        <div class="modal-box">
+        <div class="modal-box text-start">
           <h3 class="text-lg font-bold">Sair</h3>
           <p class="py-4">Deseja realmente sair?</p>
           <div class="modal-action">
             <form method="dialog" class="flex gap-3">
-              <button class="btn">Fechar</button>
+              <button class="btn bg-base-300">Fechar</button>
               <button class="btn btn-error" (click)="logout()">Sair</button>
             </form>
           </div>

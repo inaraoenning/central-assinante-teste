@@ -108,36 +108,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./screens/suporte/suporte.component').then((m) => m.SuporteComponent),
       },
-      // {
-      //   path: 'notificacao',
-      //   loadComponent: () =>
-      //     import('./screens/notificacao/notificacao.component').then((m) => m.NotificacaoComponent),
-      // },
+
       {
         path: '404',
         loadComponent: () =>
           import('./screens/not-found/not-found.component').then((m) => m.NotFoundComponent),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      // {
-      //   path: 'getting-started',
-      //   loadComponent: () =>
-      //     import('./screens/docs/getting-started/getting-started.component').then(
-      //       (m) => m.GettingStartedComponent,
-      //     ),
-      // },
-      // {
-      //   path: 'components',
-      //   loadComponent: () =>
-      //     import('./screens/docs/components-page/components-page.component').then(
-      //       (m) => m.ComponentsPageComponent,
-      //     ),
-      // },
-      // {
-      //   path: 'blank',
-      //   loadComponent: () =>
-      //     import('./screens/blank/blank.component').then((m) => m.BlankComponent),
-      // },
     ],
   },
 
@@ -145,3 +122,42 @@ export const routes: Routes = [
   { path: '', redirectTo: '/app/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/app/404' },
 ];
+
+// TODO - FUTURAS FEATURES
+// {
+//   path: 'notificacao',
+//   loadComponent: () =>
+//     import('./screens/notificacao/notificacao.component').then((m) => m.NotificacaoComponent),
+// },
+
+// {
+//   path: 'getting-started',
+//   loadComponent: () =>
+//     import('./screens/docs/getting-started/getting-started.component').then(
+//       (m) => m.GettingStartedComponent,
+//     ),
+// },
+
+// {
+//   path: 'components',
+//   loadComponent: () =>
+//     import('./screens/docs/components-page/components-page.component').then(
+//       (m) => m.ComponentsPageComponent,
+//     ),
+// },
+
+// {
+//   path: 'blank',
+//   loadComponent: () =>
+//     import('./screens/blank/blank.component').then((m) => m.BlankComponent),
+// },
+
+// Rota gerenciamento propaganda penas para usuario com permissao
+// {
+//   path: 'propaganda-admin',
+//   canActivate: [authPropagandaGuard],
+//   loadComponent: () =>
+//     import('./screens/propaganda-admin/propaganda-admin.component').then(
+//       (m) => m.PropagandaAdminComponent,
+//     ),
+// },

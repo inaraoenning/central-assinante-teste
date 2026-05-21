@@ -1,21 +1,25 @@
+// Fluxo: API retorna cor HEX → applyCorEmpresa() → hexToOklchString() → CSS variables no :root
+
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly THEME_KEY = 'theme';
-  private themeSubject = new BehaviorSubject<string>(this.getSavedTheme());
-  theme$ = this.themeSubject.asObservable();
+  private themeSubject = new BehaviorSubject<string>(this.getSavedTheme()); // BehaviorSubject inicializado com o tema salvo no localStorage
+  theme$ = this.themeSubject.asObservable(); // Observable público que os componentes assinam para reagir a mudanças de tema
 
   // Guardar cor da API
   private corEmpresa: string | null = null;
 
+  // Recupera o tema salvo no localStorage, ou 'claro' se não existir
   private getSavedTheme(): string {
-    return localStorage.getItem(this.THEME_KEY) || 'light';
+    return localStorage.getItem(this.THEME_KEY) || 'Claro';
   }
 
+  // Salva no localStorage, aplica o data-theme no DOM e emite o novo valor no subject
   setTheme(theme: string): void {
-    localStorage.setItem(this.THEME_KEY, theme);
+    localStorage.setItem(this.THEME_KEY, theme); // Chave usada no localStorage para persistir a preferência
     document.documentElement.setAttribute('data-theme', theme);
     this.themeSubject.next(theme);
 
@@ -42,7 +46,7 @@ export class ThemeService {
     root.style.setProperty('--s', oklchSyntax);
     root.style.setProperty('--sf', oklchSyntax);
 
-    // Garante que o texto sobre essas cores (primária/secundária) seja (branco ou preto)
+    // Calcula automaticamente se o texto sobre as cores (primária/secundária) deverá ser branco ou preto
     const contrastColor = this.corClara(cor) ? '0 0 0' : '1 0 0';
     root.style.setProperty('--pc', contrastColor); // Conteúdo sobre o Primary
     root.style.setProperty('--sc', contrastColor); // Conteúdo sobre o Secondary
@@ -105,6 +109,8 @@ export class ThemeService {
     return `${L.toFixed(4)} ${C.toFixed(4)} ${h.toFixed(2)}`;
   }
 
+  // Lê o localStorage e aplica o tema salvo no <html>
+  // Deve ser chamado no OnInit do AppComponent para evitar piscar
   initTheme(): void {
     const theme = this.getSavedTheme();
     document.documentElement.setAttribute('data-theme', theme);
@@ -114,5 +120,5 @@ export class ThemeService {
     return this.themeSubject.value;
   }
 
-  readonly themes = ['light', 'dark'];
+  readonly themes = ['Claro', 'escuro'];
 }

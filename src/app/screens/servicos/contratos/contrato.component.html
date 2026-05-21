@@ -7,8 +7,10 @@
   @for (contrato of contratoService.contratos(); track contrato.id) {
     <a
       (click)="contratoService.selecionarContrato(contrato.id.toString())"
-      class="transition-all duration-300 cursor-pointer rounded-box shadow-md mb-2 border-light bg-base-200 border-l-4"
-      [class.border-success]="contratoService.contratoSelecionado()!.id === contrato.id"
+      (keydown)="contratoService.selecionarContrato(contrato.id.toString())"
+      class="transition-all duration-300 cursor-pointer rounded-box shadow-md mb-2 bg-base-300/50 border-l-4"
+      [class.border-primary]="contratoService.contratoSelecionado()!.id === contrato.id"
+      [class.border-base-content/20]="contratoService.contratoSelecionado()!.id !== contrato.id"
     >
       <div>
         <div class="p-2 flex flex-col gap-1">

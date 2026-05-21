@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FinanceiroService } from './financeiro.service';
 import { EmpresaService } from '../../core/services/empresa.service';
 import { Contrato } from '../../models/contrato.model';
@@ -10,7 +11,7 @@ import { FinanceiroTabelaComponent } from './financeiro-tabela/financeiro-tabela
 @Component({
   selector: 'app-financeiro',
   standalone: true,
-  imports: [CommonModule, FinanceiroFaturaAtualComponent, FinanceiroTabelaComponent],
+  imports: [CommonModule, RouterLink, FinanceiroFaturaAtualComponent, FinanceiroTabelaComponent],
   templateUrl: './financeiro.component.html',
 })
 export class FinanceiroComponent implements OnInit {

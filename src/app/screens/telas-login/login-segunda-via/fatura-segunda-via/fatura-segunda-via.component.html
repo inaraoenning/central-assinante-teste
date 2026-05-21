@@ -1,9 +1,8 @@
 <!-- @if (faturasAbertas().length > 0 || ) { -->
   <div class="pb-10 font-sans animate-fade-in max-w-6xl mx-auto px-0 md:px-4">
     
-
     <!-- Lista de Faturas Pendentes -->
-    @if (faturasAbertas().length > 0) {
+    @if (faturasPendentes().length > 0) {
 
       <!-- Seletor de Contrato (Pills) -->
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"> 
@@ -111,6 +110,7 @@
                           <!-- Boleto -->
                           <a
                             (click)="faturaSegundaViaService.openBoleto(f)"
+                            (keypress)="faturaSegundaViaService.openBoleto(f)"
                             class="hover:text-success cursor-pointer tooltip"
                             data-tip="Imprimir Boleto"
                             ><svg
@@ -135,6 +135,7 @@
                           <!-- Copiar Linha Digitavel Boleto -->
                           <a
                             (click)="faturaSegundaViaService.copiarCodigoBarras(f)"
+                            (keydown)="faturaSegundaViaService.copiarCodigoBarras(f)"
                             class="hover:text-success cursor-pointer tooltip"
                             data-tip="Copiar Código de Barras"
                             ><svg
@@ -160,6 +161,7 @@
                           @if (f.textoImagemQRcodePix) {
                             <a
                               (click)="faturaSegundaViaService.copiarCodigoPix(f)"
+                              (keypress)="faturaSegundaViaService.copiarCodigoPix(f)"
                               class="hover:text-success cursor-pointer tooltip"
                               data-tip="Copiar Código PIX"
                               ><svg
@@ -219,11 +221,19 @@
         </div>
       </div>
     } @else {
-
       @if(isLoading()) {
         <span class="loading loading-spinner loading-lg py-20"></span>
-      } @else {
-
+       } @else if (error()) {
+        <div class="flex flex-col items-center justify-center py-20 text-center animate-fade-in text-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <h2 class="text-xl font-bold">{{ error() }}</h2>
+      <button (click)="faturaSegundaViaService.buscarContratosSegundaVia()" class="btn btn-outline btn-error mt-4">
+        Tentar Novamente
+      </button>
+      </div>
+      }@else {
       <div class="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
         <h2 class="text-2xl font-bold mb-2">Olá, {{ contratos()[0]?.nomeCliente }}!</h2>
         <p class="text-base-content/50 max-w-sm font-medium">

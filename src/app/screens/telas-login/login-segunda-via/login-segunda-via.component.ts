@@ -32,9 +32,7 @@ export class LoginSegundaViaComponent {
   public empresaService = inject(EmpresaService);
 
   Acessar() {
-    this.loading.set(true);
     this.mostrarTelefone.set(true);
-    this.loading.set(false);
   }
 
   verificarCliente() {

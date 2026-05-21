@@ -15,13 +15,11 @@ import { NotificacaoService } from '../../core/services/notificacao.service';
 })
 export class HeaderComponent implements OnInit {
   themes: string[] = [];
-  currentTheme = 'light';
+  currentTheme = 'Claro';
 
-  constructor(
-    private themeService: ThemeService,
-    private authService: AuthService,
-    private rightDrawerService: RightDrawerService,
-  ) {}
+  private themeService = inject(ThemeService);
+  private authService = inject(AuthService);
+  private rightDrawerService = inject(RightDrawerService);
 
   public notificacao = inject(NotificacaoService);
   public clienteService = inject(ClienteService);

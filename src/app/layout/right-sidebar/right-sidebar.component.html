@@ -75,5 +75,5 @@
   </section>
 
   <!-- Backdrop click area -->
-  <section class="w-screen h-full cursor-pointer" (click)="close()"></section>
+  <section class="w-screen h-full cursor-pointer" (click)="close()" (keydown.escape)="close()"></section>
 </div>

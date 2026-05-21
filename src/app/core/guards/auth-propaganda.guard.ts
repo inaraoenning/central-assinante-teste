@@ -1,17 +1,17 @@
 // Guard - função que o Angular executa automaticamente toda vez que alguém tenta entrar em uma rota protegida.
 // usado no arquivo de rotas
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authPropagandaGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
-  const router = inject(Router);
 
-  if (!auth.estaLogado()) {
-    return router.createUrlTree(['/login']);
+  const idCliente = auth.usuarioAtual()?.idCliente;
+  if (idCliente == 104745) {
+    return true;
   }
-  return true;
+  return false;
 };
 
 // CanActivateFn - transforma o Guard em uma simples variável que guarda uma função

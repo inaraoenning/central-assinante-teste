@@ -35,8 +35,8 @@ export class EmpresaStateService {
     // Título
     this.atualizarTitulo(empresa.nomeAmigavelEmpresa);
 
-    // Favicon (dominio usa url da empresa, selecao usa local)
-    if (modo === 'dominio' && empresa.dominio) {
+    // Favicon: usa o domínio do provedor em ambos os modos (domínio e seleção)
+    if (empresa.dominio) {
       this.atualizarFavicon('https://www.' + empresa.dominio + '/favicon.ico');
     } else {
       this.atualizarFavicon();

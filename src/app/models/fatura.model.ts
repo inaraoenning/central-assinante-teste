@@ -80,27 +80,36 @@ export class Fatura {
   // REGRA DE NEGÓCIO: Label textual do status
   get labelStatus(): string {
     switch (this.statusParaUI) {
-      case 'vencida': return 'VENCIDA';
-      case 'aberta': return 'ABERTA';
-      case 'paga': return 'PAGO';
+      case 'vencida':
+        return 'VENCIDA';
+      case 'aberta':
+        return 'ABERTA';
+      case 'paga':
+        return 'PAGO';
     }
   }
 
   // REGRA DE NEGÓCIO: Cor baseada no status (classes para o DaisyUI)
   get corStatus(): string {
     switch (this.statusParaUI) {
-      case 'vencida': return 'error';
-      case 'aberta': return 'info';
-      case 'paga': return 'success';
+      case 'vencida':
+        return 'error';
+      case 'aberta':
+        return 'info';
+      case 'paga':
+        return 'success';
     }
   }
 
   // REGRA DE NEGÓCIO: Ícone baseado no status
   get iconeStatus(): string {
     switch (this.statusParaUI) {
-      case 'vencida': return 'alert-circle';
-      case 'aberta': return 'calendar-outline';
-      case 'paga': return 'checkmark-circle';
+      case 'vencida':
+        return 'alert-circle';
+      case 'aberta':
+        return 'calendar-outline';
+      case 'paga':
+        return 'checkmark-circle';
     }
   }
 
@@ -124,5 +133,27 @@ export class Fatura {
     const mesNum = Number(mes);
     if (mesNum < 1 || mesNum > 12) return '';
     return `${mes}/${ano}`;
+  }
+
+  get mesTexto(): string | null {
+    if (!this.vencimento) return '';
+
+    const mesTexto = this.vencimento.split('-')[1].trim();
+
+    const meses = [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ];
+    return meses[Number(mesTexto) - 1];
   }
 }

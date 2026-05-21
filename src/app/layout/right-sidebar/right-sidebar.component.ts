@@ -22,7 +22,7 @@ export class RightSidebarComponent implements OnInit, OnDestroy {
   public notificacaoService = inject(NotificacaoService);
   public router = inject(Router);
 
-  THEME_BG: { [key: string]: string } = {
+  THEME_BG: Record<string, string> = {
     BLUE: 'bg-blue-200 dark:bg-blue-600 dark:text-blue-100',
     GREEN: 'bg-green-200 dark:bg-green-600 dark:text-green-100',
     PURPLE: 'bg-purple-200 dark:bg-purple-600 dark:text-purple-100',
@@ -35,7 +35,7 @@ export class RightSidebarComponent implements OnInit, OnDestroy {
     return this.THEME_BG[theme] || '';
   }
 
-  constructor(private rightDrawerService: RightDrawerService) {}
+  private rightDrawerService = inject(RightDrawerService);
 
   ngOnInit(): void {
     this.sub = this.rightDrawerService.drawer$.subscribe((state) => {

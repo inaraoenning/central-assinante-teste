@@ -1,9 +1,8 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EmpresaService } from '../../core/services/empresa.service';
 import { Contrato } from '../../models/contrato.model';
 import { Fatura } from '../../models/fatura.model';
-import { ContratoDto } from '../../types/contrato.types';
 import { Md5 } from 'ts-md5';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/ToastService.service';
@@ -18,7 +17,6 @@ export class FinanceiroService {
   private http = inject(HttpClient);
   private toastService = inject(ToastService);
   private contratoService = inject(ContratoService);
-
   private _contratoSelecionadoId = signal<number | null>(null);
 
   // Delega para ContratoService — fonte única de verdade para contratos
@@ -141,7 +139,7 @@ export class FinanceiroService {
   }
 
   // Controle de visibilidade da NFCom verificado via API
-  mostrarNfMap = signal<Map<number, boolean>>(new Map());
+  mostrarNfComMap = signal<Map<number, boolean>>(new Map());
 
   gerarMd5(idTitulo: number, empresaDb: string | null): string {
     const hashInput = `hash do print: ${idTitulo}${empresaDb}`;
@@ -150,46 +148,51 @@ export class FinanceiroService {
     return k;
   }
 
-  // Verifica existencia nfs retorna apenas o resultado da busca, não atualiza signal
+  // NFCom
   private async verificaExistenciaNfCom(f: Fatura): Promise<{ idTitulo: number; existe: boolean }> {
     const url = `${this.empresaService.apiUrl}print/nfcom?e=${f.idEmpresaTj}&id=${f.idTitulo}&k=${f.hashNfcom}`;
+    const headers = new HttpHeaders({ 'skip-auth': 'true' });
     try {
-      await firstValueFrom(this.http.head(url));
-      return { idTitulo: f.idTitulo, existe: true };
-    } catch (e) {
+      const res = await firstValueFrom(
+        this.http.head(url, { headers, observe: 'response' as const }),
+      );
+      // Retorna true APENAS se o status for exatamente 200
+      return { idTitulo: f.idTitulo, existe: res.status === 200 };
+    } catch (err: any) {
       return { idTitulo: f.idTitulo, existe: false };
     }
   }
 
   // Coleta todas as notas de TODOS os contratos, faz 1 único set()
   async verificarTodasAsNotas() {
-    const faturas = this.contratoService
-      .contratos()
-      .flatMap((c) => c.faturas || [])
-      .filter(
-        (f) =>
-          f.pago &&
-          f.visualizarBoleto &&
-          f.hashNfcom &&
-          f.idEmpresaTj &&
-          !this.mostrarNfMap().has(f.idTitulo),
-      );
+    const contratos = this.contratoService.contratos();
+    const faturas = contratos.flatMap((c) => c.faturas || []);
 
-    if (faturas.length === 0) return;
-
-    // Promise.allSettled: não falha se um HEAD individual der erro de rede
-    const resultados = await Promise.allSettled(
-      faturas.map((f) => this.verificaExistenciaNfCom(f)),
+    // 1. Filtrar as faturas elegíveis para NFCom que ainda não foram testadas
+    const faturasNfCom = faturas.filter(
+      (f) =>
+        f.visualizarBoleto &&
+        f.hashNfcom &&
+        f.idEmpresaTj &&
+        !this.mostrarNfComMap().has(f.idTitulo),
     );
 
-    const mapaFaturas = new Map(this.mostrarNfMap());
+    if (faturasNfCom.length === 0) return;
 
-    for (const resultado of resultados) {
-      if (resultado.status === 'fulfilled') {
-        mapaFaturas.set(resultado.value.idTitulo, resultado.value.existe);
-      }
-    }
-    this.mostrarNfMap.set(mapaFaturas);
+    // 2. Executar as chamadas em paralelo apenas para nfcom
+    const resNfCom = await Promise.allSettled(
+      faturasNfCom.map((f) => this.verificaExistenciaNfCom(f)),
+    );
+
+    // 3. Atualizar o Map reativo com os resultados
+    const novoMapNfCom = new Map(this.mostrarNfComMap());
+
+    resNfCom.forEach(
+      (r) => r.status === 'fulfilled' && novoMapNfCom.set(r.value.idTitulo, r.value.existe),
+    );
+
+    // 4. Setar os signals
+    this.mostrarNfComMap.set(novoMapNfCom);
   }
 
   // Ações compartilhadas (usados em financeiro e fatura-2-via)
@@ -207,7 +210,7 @@ export class FinanceiroService {
         navigator.clipboard.writeText(res.trim());
         this.toastService.showSuccess('Código de barras copiado!');
       }
-    } catch (e) {
+    } catch {
       this.toastService.showError('Erro ao copiar código de barras.');
     }
   }
@@ -219,18 +222,26 @@ export class FinanceiroService {
     }
   }
 
+  // NFCom
   openNFcom(f: Fatura) {
     const url = `${environment.apiUrl}print/nfcom?e=${f.idEmpresaTj}&id=${f.idTitulo}&k=${f.hashNfcom}`;
     window.open(url, '_blank');
   }
 
+  // NF
   openNF(f: Fatura) {
-    const url = `${environment.apiUrl}/boleto/nf.aspx?id=${f.idTitulo}&k=${f.hashNF}`;
+    const url = `${environment.apiUrl}boleto/nftj.aspx?id=${f.idTitulo}&k=${f.hashNF}`;
     window.open(url, '_blank');
   }
 
+  // Nota Fiscal de Seriço
   openNFS(f: Fatura) {
-    const url = `${environment.apiUrl}/boleto/nfs.aspx?id=${f.idTitulo}&k=${f.hashNFS}`;
+    const url = `${environment.apiUrl}boleto/nfs.aspx?id=${f.idTitulo}&k=${f.hashNFS}`;
     window.open(url, '_blank');
+  }
+
+  reset(): void {
+    this._contratoSelecionadoId.set(null);
+    this.mostrarNfComMap.set(new Map());
   }
 }

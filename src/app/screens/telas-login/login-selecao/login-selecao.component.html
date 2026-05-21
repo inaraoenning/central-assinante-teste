@@ -4,7 +4,7 @@
       <!-- Cabeçalho -->
       <div class="text-center mb-4">
         <div
-          class="w-24 h-24 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-3"
+          class="w-24 h-24 bg-white bg-opacity-80 shadow-lg rounded-2xl flex items-center justify-center mx-auto mb-4"
         >
           <!-- Company building icon -->
           <!-- <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,7 +23,7 @@
       @if (provedores().length === 0) {
         <div class="space-y-3">
           <div class="form-control">
-            <label class="label"><span class="label-text font-medium">CPF / CNPJ</span></label>
+            <label for="selecao-cpf-input" class="label"><span class="label-text font-medium">CPF / CNPJ</span></label>
             <input
               type="text"
               name="username"
@@ -32,7 +32,7 @@
               placeholder="Apenas números"
               class="input input-bordered w-full"
               id="selecao-cpf-input"
-              autofocus
+             
               mask="000.000.000-00||00.000.000/0000-00"
               [showMaskTyped]="false"
               [clearIfNotMatch]="true"
@@ -87,7 +87,7 @@
               <li>
                 <button
                   type="button"
-                  class="w-full flex items-center gap-3 p-3 rounded-xl border border-base-300 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer text-left"
+                  class="w-full flex items-center gap-3 p-3 rounded-xl border border-base-300 hover:border-neutral-content hover:bg-base-200 transition-all cursor-pointer text-left"
                   (click)="selecionarProvedor(provedor)"
                   [id]="'btn-provedor-' + provedor.dominio"
                 >
@@ -97,7 +97,7 @@
                       <img
                         [src]="provedor.logoUrl"
                         [alt]="provedor.nomeAmigavelEmpresa"
-                        class="w-12 h-12 rounded-lg object-contain bg-base-200 p-1"
+                        class="w-16 h-16 object-contain px-1"
                         (error)="$any($event.target).style.display = 'none'"
                       />
                     } @else {
@@ -117,10 +117,10 @@
                       {{ provedor.nomeAmigavelEmpresa || provedor.nomeEmpresa }}
                     </p>
                     @if (provedor.idCliente) {
-                      <p class="text-xs text-base-content/50">
-                        Cód Cliente: {{ provedor.idCliente }}
+                      <p class="text-sm font-semibold  text-base-content/50">
+                        Código: {{ provedor.idCliente }}
                       </p>
-                      <p class="text-xs text-base-content/50">
+                      <p class="text-sm font-semibold  text-base-content/50">
                         Usuário: {{ provedor.usernameCliente }}
                       </p>
                     }

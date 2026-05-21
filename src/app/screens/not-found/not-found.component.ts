@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-base-200">
+    <div class="min-h-screen flex items-center justify-center bg-base-300">
       <div class="text-center">
         <div class="text-9xl font-black text-primary opacity-20">404</div>
         <h1 class="text-4xl font-bold mt-4">Página não encontrada</h1>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme.service';
 
@@ -9,7 +9,7 @@ import { ThemeService } from './core/services/theme.service';
   templateUrl: './app.html',
 })
 export class App implements OnInit {
-  constructor(private themeService: ThemeService) {}
+  private themeService = inject(ThemeService);
 
   ngOnInit(): void {
     this.themeService.initTheme();

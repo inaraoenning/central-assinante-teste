@@ -1,0 +1,160 @@
+
+  <div class="modal modal-open">
+    <div class="modal-box w-11/12 max-w-2xl max-h-screen overflow-y-auto">
+
+      <h3 class="font-bold text-lg mb-6">
+        {{ modoEdicao ? 'Editar Propaganda' : 'Nova Propaganda' }}
+      </h3>
+
+      <form (ngSubmit)="salvar()" class="space-y-4">
+
+        <!-- Título (admin-only) -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">Título <span class="badge badge-xs badge-ghost ml-1">admin only</span></span>
+          </label>
+          <input type="text" name="titulo" [(ngModel)]="form_titulo"
+            class="input input-bordered w-full"
+            placeholder="Nome interno para identificar no painel" />
+          <label class="label">
+            <span class="label-text-alt text-base-content/40">Não aparece para o cliente final</span>
+          </label>
+        </div>
+
+        <!-- Empresa -->
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Empresa *</span></label>
+          <select name="empresa" [(ngModel)]="form_empresa" required
+            class="select select-bordered w-full">
+            <option value="" disabled>Selecione a empresa</option>
+            @for (emp of empresasDisponiveis; track emp) {
+              <option [value]="emp">{{ emp }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Imagem: toggle URL / Arquivo -->
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Imagem *</span></label>
+
+          <!-- Toggle tabs -->
+          <div class="tabs tabs-boxed bg-base-200 mb-3 p-1 gap-1">
+            <button type="button"
+              class="tab flex-1 transition-all"
+              [class.tab-active]="modoImagem() === 'url'"
+              (click)="alternarModoImagem('url')">
+              🔗 Link / URL
+            </button>
+            <button type="button"
+              class="tab flex-1 transition-all"
+              [class.tab-active]="modoImagem() === 'arquivo'"
+              (click)="alternarModoImagem('arquivo')">
+              📁 Upload de Arquivo
+            </button>
+          </div>
+
+          <!-- Modo URL -->
+          @if (modoImagem() === 'url') {
+            <input type="text" name="imagemUrl" [(ngModel)]="form_imagemUrl"
+              class="input input-bordered w-full"
+              placeholder="/assets/banners/banner1.jpg  ou  https://..."
+              (input)="onUrlDigitada()" />
+            <label class="label">
+              <span class="label-text-alt text-base-content/40">
+                Use <code class="bg-base-200 px-1 rounded">/assets/</code> para imagens locais do projeto
+              </span>
+            </label>
+          }
+
+          <!-- Modo arquivo -->
+          @if (modoImagem() === 'arquivo') {
+            <label for="input-imagem"
+              class="border-2 border-dashed border-base-300 rounded-xl cursor-pointer
+                     hover:border-primary hover:bg-primary/5 transition-all
+                     flex flex-col items-center justify-center overflow-hidden"
+              [class.h-44]="!previewUrl()"
+              [class.p-2]="!!previewUrl()">
+              @if (previewUrl()) {
+                <img [src]="previewUrl()" alt="Preview"
+                  class="max-h-52 w-full object-contain rounded-lg" />
+                <span class="text-xs text-base-content/40 mt-2 mb-1">Clique para trocar a imagem</span>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-base-content/20 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p class="text-sm text-base-content/50 font-medium">Clique para selecionar a imagem</p>
+                <p class="text-xs text-base-content/30 mt-1">PNG, JPG, WebP — máx. 5MB</p>
+              }
+            </label>
+            <input id="input-imagem" type="file" accept="image/*" class="hidden"
+              (change)="onArquivoSelecionado($event)" />
+          }
+
+          <!-- Preview compartilhado (modo URL) -->
+          @if (modoImagem() === 'url' && previewUrl()) {
+            <div class="mt-2 rounded-xl overflow-hidden border border-base-200 bg-base-200">
+              <img [src]="previewUrl()" alt="Preview"
+                class="w-full max-h-52 object-contain"
+                (error)="previewUrl.set(null)" />
+            </div>
+          }
+        </div>
+
+
+        <!-- Link de destino -->
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">Link de destino</span></label>
+          <input type="url" name="link" [(ngModel)]="form_link"
+            class="input input-bordered w-full"
+            placeholder="https://... (opcional)" />
+        </div>
+
+        <!-- Datas -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Data Início</span></label>
+            <input type="date" name="dataInicio" [(ngModel)]="form_dataInicio"
+              class="input input-bordered w-full" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">Data Fim</span></label>
+            <input type="date" name="dataFim" [(ngModel)]="form_dataFim"
+              class="input input-bordered w-full" />
+          </div>
+        </div>
+
+        <!-- Info automáticas -->
+        <div class="alert bg-base-200 border-0 py-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-info shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="text-xs text-base-content/60">
+            A propaganda será criada como <strong>Ativa</strong> e receberá a
+            ordem <strong>#{{ modoEdicao ? '(mantida)' : proximaOrdem }}</strong> automaticamente.
+          </span>
+        </div>
+
+        @if (erroSalvar()) {
+          <div class="alert alert-error py-2">
+            <span class="text-sm">{{ erroSalvar() }}</span>
+          </div>
+        }
+
+        <div class="modal-action mt-6">
+          <button type="button" class="btn btn-ghost" (click)="fecharModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="salvando() || uploadando()">
+            @if (salvando() || uploadando()) {
+              <span class="loading loading-spinner loading-sm"></span>
+              {{ uploadando() ? 'Enviando imagem...' : 'Salvando...' }}
+            } @else {
+              {{ modoEdicao ? 'Salvar Alterações' : 'Criar Propaganda' }}
+            }
+          </button>
+        </div>
+
+      </form>
+    </div>
+    <div class="modal-backdrop" (click)="fecharModal()"></div>
+  </div>
+

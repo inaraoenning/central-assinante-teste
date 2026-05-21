@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LeftSidebarComponent } from './left-sidebar/left-sidebar.component';
@@ -24,6 +24,7 @@ import { ToastService } from '../core/services/ToastService.service';
 export class LayoutComponent {
   // Injetamos o serviço como public para o template ter acesso
   public toastService = inject(ToastService);
+
   // private notificacaoService = inject(NotificacaoService);
 
   // ngOnInit(): void {

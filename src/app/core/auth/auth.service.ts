@@ -7,6 +7,8 @@ import { Observable, throwError } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 import { EmpresaService } from '../services/empresa.service';
 import { AppLoginResponse } from '../../types/empresa.types';
+import { ContratoService } from '../../screens/servicos/contrato.service';
+import { FinanceiroService } from '../../screens/financeiro/financeiro.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -23,6 +25,9 @@ export class AuthService {
   // sinais somente leitura
   readonly usuarioAtual = computed(() => this.usuarioLogadoSignal());
   readonly estaLogado = computed(() => this.clienteAtualSignal());
+
+  private contratoService = inject(ContratoService);
+  private financeiroService = inject(FinanceiroService);
 
   // `dominio` não sabe idEmpresa ou DB.
   login(model: { username: string; password?: string }): Observable<AppLoginResponse> {
@@ -92,7 +97,7 @@ export class AuthService {
             const clienteNormalizado = {
               ...response.cliente,
               codigo: response.cliente?.idCliente,
-              cpf_cnpj: response.cliente?.cpfCnpj,
+              cpfCnpj: response.cliente?.cpfCnpj,
             };
             this.logIn(response.token, clienteNormalizado, 0);
           }
@@ -123,6 +128,9 @@ export class AuthService {
   }
 
   logout(): void {
+    this.contratoService.reset();
+    this.financeiroService.reset();
+
     sessionStorage.clear();
     localStorage.removeItem('@App:clienteInfo'); // Limpa cache do cliente anterior
     localStorage.removeItem('@App:contratos'); // Limpa cache de contratos

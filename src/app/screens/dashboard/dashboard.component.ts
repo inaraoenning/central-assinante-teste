@@ -1,15 +1,14 @@
 import { signal, Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
-import { NotificacaoService } from '../../core/services/notificacao.service';
+// import { NotificacaoService } from '../../core/services/notificacao.service';
 import { RouterLink } from '@angular/router';
 import { ClienteService } from '../meus-dados/cliente.service';
 import { Cliente } from '../../models/cliente.model';
 import { ModalDesbloqueioComponent } from '../components/modal-desbloqueio/modal-desbloqueio.component';
 import { AuthService } from '../../core/auth/auth.service';
-import { PropagandaComponent } from '../propaganda/propaganda.component';
+//import { PropagandaComponent } from '../propaganda/propaganda.component';
 import { ContratoService } from '../servicos/contrato.service';
 
 Chart.register(...registerables);
@@ -19,9 +18,9 @@ Chart.register(...registerables);
   standalone: true,
   imports: [
     CommonModule,
-    //  BaseChartDirective,
+    // BaseChartDirective,
     RouterLink,
-    PropagandaComponent,
+    //PropagandaComponent,
     ModalDesbloqueioComponent,
   ],
   templateUrl: './dashboard.component.html',
@@ -33,11 +32,7 @@ export class DashboardComponent implements OnInit {
   cliente = signal<Cliente | undefined>(undefined);
   isLoading = computed(() => this.contratoService.isLoading());
 
-  constructor(
-    //Aciona a busca na API quando o componente é criado
-    //private notificacaoService: NotificacaoService,
-    private clientService: ClienteService,
-  ) {}
+  clientService = inject(ClienteService);
 
   async ngOnInit() {
     // Buscar os dados assim que abrir a tela

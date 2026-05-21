@@ -72,12 +72,14 @@ export class ContratoService {
     return this.http.get<any>(url).pipe(
       map((res) => {
         const payload = res?.data || res;
-        const rawList = Array.isArray(payload) ? payload : payload?.contratos || [];
+        const rawList: ContratoDto[] = Array.isArray(payload) ? payload : payload?.contratos || [];
+
+        // Salva o DTO bruto no cache ANTES da conversão, evitando dupla divisão de velocidades
+        localStorage.setItem(this.CACHE_KEY, JSON.stringify(rawList));
+        localStorage.setItem(this.CACHE_TS_KEY, Date.now().toString());
         return rawList.map((c: ContratoDto) => new Contrato(c));
       }),
       tap((contratos) => {
-        localStorage.setItem(this.CACHE_KEY, JSON.stringify(contratos));
-        localStorage.setItem(this.CACHE_TS_KEY, Date.now().toString());
         this._contratos.set(contratos);
         this._contratoSelecionado.set(contratos[0] ?? null);
       }),
@@ -87,5 +89,10 @@ export class ContratoService {
 
   getLinkContrato(codigoCliente: number, hashContrato: string): string {
     return `https://www.${this.empresaService.empresaAtiva()?.dominio}/central-assinante/contrato/${codigoCliente}?k=${hashContrato}`;
+  }
+
+  reset(): void {
+    this._contratos.set([]);
+    this._contratoSelecionado.set(null);
   }
 }

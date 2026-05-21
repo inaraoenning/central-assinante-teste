@@ -2,7 +2,7 @@
   <div class="mb-6 flex justify-between items-center">
     <h2 class="text-2xl font-bold">Meus Protocolos</h2>
     <div class="badge badge-primary badge-outline gap-2 py-3 px-4">
-      {{ data().length }} Protocolos
+      {{ dados()?.totalProtocolos ?? 0 }} Protocolos
     </div>
   </div>
 
@@ -10,11 +10,11 @@
     <div class="flex justify-center py-20">
       <span class="loading loading-spinner loading-lg text-primary"></span>
     </div>
-  } @else if (data().length > 0) {
-    <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
-      @for (r of data(); track r.protocolo) {
-        <div
-          class="card bg-base-100 shadow-xl border border-base-200 hover:border-primary/30 transition-all duration-300"
+  } @else if (dados()?.protocolos?.length ?? 0 > 0) {
+    <div class="grid grid-cols-1 gap-6">
+      @for (p of dados()!.protocolos; track p.protocolo) {
+          <div
+          class="card bg-base-200/50 shadow-xl border border-base-200 hover:border-primary/30 transition-all duration-300"
         >
           <div class="card-body p-6">
             <div class="flex justify-between items-start mb-4">
@@ -36,9 +36,9 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-xl font-bold text-base-content">Protocolo #{{ r.protocolo }}</h3>
+                  <h3 class="text-xl font-bold text-base-content">Protocolo #{{ p.protocolo }}</h3>
                   <p class="text-sm text-base-content/50 font-medium">
-                    Aberto em {{ r.datainicio }}
+                    Aberto em {{ p.dataInicio }}
                   </p>
                 </div>
               </div>
@@ -54,19 +54,25 @@
                 <span class="text-[10px] font-black uppercase text-base-content/40 tracking-widest"
                   >Hora Início</span
                 >
-                <p class="text-sm font-semibold text-base-content/80">{{ r.horainicio }}</p>
+                <p class="text-sm font-semibold text-base-content/80">{{ p.horaInicio }}</p>
               </div>
               <div class="space-y-1">
                 <span class="text-[10px] font-black uppercase text-base-content/40 tracking-widest"
                   >Duração Total</span
                 >
-                <p class="text-sm font-semibold text-base-content/80">{{ r.duracao }}</p>
+                <p class="text-sm font-semibold text-base-content/80">{{ p.duracao }}</p>
               </div>
-              <div class="space-y-1 col-span-2">
+              <div class="space-y-1">
                 <span class="text-[10px] font-black uppercase text-base-content/40 tracking-widest"
                   >Solicitante</span
                 >
-                <p class="text-sm font-semibold text-base-content/80">{{ r.solicitante }}</p>
+                <p class="text-sm font-semibold text-base-content/80">{{ p.solicitante || '-' }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-black uppercase text-base-content/40 tracking-widest"
+                  >Setor</span
+                >
+                <p class="text-sm font-semibold text-base-content/80">{{ p.setor || ' - ' }}</p>
               </div>
             </div>
           </div>
@@ -78,7 +84,7 @@
       <div class="hero-content text-center">
         <div class="max-w-md">
           <div
-            class="bg-base-200 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-base-content/30"
+            class="bg-base-300 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-base-content/30"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +105,7 @@
           <p class="py-4 text-base-content/60">
             Você ainda não possui registros de atendimento em nosso sistema.
           </p>
-          <button class="btn btn-primary">Atualizar Lista</button>
+          <button class="btn btn-primary" wire:click="loadProtocolos()">Atualizar Lista</button>
         </div>
       </div>
     </div>

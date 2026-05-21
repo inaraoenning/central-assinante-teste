@@ -7,6 +7,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router); // traz Router para dentro da função
   const token = sessionStorage.getItem('TOKEN'); // pega a "chave de acesso" que o AuthService guardou no login
 
+  // Se tiver o cabeçalho skip-auth, limpa ele e envia sem Token
+  if (req.headers.has('skip-auth')) {
+    const cleanReq = req.clone({
+      headers: req.headers.delete('skip-auth'),
+    });
+    return next(cleanReq);
+  }
+
   // "Carimba" requisições com o token
   // Toda requisição passa por aqui antes de ir para a internet
   let authReq = req;

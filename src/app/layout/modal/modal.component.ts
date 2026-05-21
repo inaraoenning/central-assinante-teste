@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { ModalService, ModalConfig } from '../../core/services/modal.service';
@@ -20,7 +20,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     return 'max-w-lg';
   }
 
-  constructor(private modalService: ModalService) {}
+  private modalService = inject(ModalService);
 
   ngOnInit(): void {
     this.sub = this.modalService.modal$.subscribe((config) => {

@@ -15,8 +15,8 @@ export class FaturaSegundaViaComponent {
   contratos = this.faturaSegundaViaService.contratos;
   contratosComPendencia = this.faturaSegundaViaService.contratosComPendencia;
   contratoSelecionado = this.faturaSegundaViaService.contratoSelecionado;
-  faturasAbertas = this.faturaSegundaViaService.faturasAbertas;
-  faturasPendentes = this.faturaSegundaViaService.faturasAtrasadas;
+  faturasPendentes = this.faturaSegundaViaService.faturasPendentes;
+  error = this.faturaSegundaViaService.error;
 
   selecionarContrato(id: number): void {
     this.faturaSegundaViaService.setContratoSelecionado(id);
